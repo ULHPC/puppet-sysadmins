@@ -3,7 +3,7 @@
 # Copyright:: Copyright (c) 2011 Sebastien Varrette
 # License::   GPLv3
 #
-# Time-stamp: <Fri 2011-08-26 14:29 svarrette>
+# Time-stamp: <Fri 2011-08-26 16:50 svarrette>
 # ------------------------------------------------------------------------------
 # = Class: sysadmin::params
 #
@@ -61,6 +61,9 @@ class sysadmin::params {
     #### MODULE INTERNAL VARIABLES  #########
     # (Modify to adapt to unsupported OSes)
     #######################################
+    $homebasedir = "/var/lib"
+
+    
     # $packagename = $::operatingsystem ? {
     #     default => 'packagename',
     # }

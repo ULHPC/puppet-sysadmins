@@ -3,7 +3,7 @@
 # Copyright:: Copyright (c) 2011 Sebastien Varrette
 # License::   GPLv3
 #
-# Time-stamp: <Fri 2011-08-26 14:35 svarrette>
+# Time-stamp: <Fri 2011-08-26 18:04 svarrette>
 # ------------------------------------------------------------------------------
 # = Class: sysadmin
 #
@@ -57,6 +57,11 @@ inherits sysadmin::params
 {
     info ("Configuring sysadmin (login = ${login}, ensure = ${ensure})")
 
+    if ! ($ensure in [ 'present', 'absent' ]) {
+        fail("sysadmin 'ensure' parameter must be either absent or present")
+    }
+
+
     case $::operatingsystem {
         debian, ubuntu:         { include sysadmin::debian }
         redhat, fedora, centos: { include sysadmin::redhat }
@@ -73,21 +78,47 @@ inherits sysadmin::params
 #
 # Note: respect the Naming standard provided here[http://projects.puppetlabs.com/projects/puppet/wiki/Module_Standards]
 class sysadmin::common {
-    
+
     # Load the variables used in this module. Check the ssh-server-params.pp file
     require sysadmin::params
-   
+
+    $homedir = "${sysadmin::params::homebasedir}/${sysadmin::login}"
+
     # Create the user
     user { "${sysadmin::login}":
         ensure    => "${sysadmin::ensure}",
-        allowdupe => false, 
+        allowdupe => false,
         comment   => 'Local System Administrator',
-        home      => "/var/lib/${sysadmin::login}",
+        home      => "${homedir}",
         groups    => $sysadmin::groups,
-        shell     => '/bin/bash'
+        shell     => '/bin/bash',
     }
 
-    
+    # delete directories on 'absent'
+    # Should find a better way to handle the dependency with the existing owner on remove
+    if ($sysadmin::ensure == 'absent') {
+        file{ "${homedir}":      ensure => 'absent'}
+        file{ "${homedir}/.ssh": ensure => 'absent'}
+    }
+    else
+    {
+        # Create the user homedir
+        file { "${homedir}":
+            ensure  => 'directory',
+            owner   => "${sysadmin::login}",
+            group   => "${sysadmin::login}",
+            mode    => '0700',
+        }
+
+        # Create the SSH directory
+        file { "${homedir}/.ssh":
+            ensure  => 'directory',
+            owner   => "${sysadmin::login}",
+            group   => "${sysadmin::login}",
+            mode    => '0700',
+        }
+
+    }
 }
 
 # ------------------------------------------------------------------------------
