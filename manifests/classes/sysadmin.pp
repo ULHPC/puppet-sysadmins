@@ -2,8 +2,6 @@
 # Author::    Sebastien Varrette (Sebastien.Varrette@uni.lu)
 # Copyright:: Copyright (c) 2011 Sebastien Varrette
 # License::   GPLv3
-#
-# Time-stamp: <Fri 2011-08-26 18:04 svarrette>
 # ------------------------------------------------------------------------------
 # = Class: sysadmin
 #
@@ -86,39 +84,39 @@ class sysadmin::common {
 
     # Create the user
     user { "${sysadmin::login}":
-        ensure    => "${sysadmin::ensure}",
-        allowdupe => false,
-        comment   => 'Local System Administrator',
-        home      => "${homedir}",
-        groups    => $sysadmin::groups,
-        shell     => '/bin/bash',
-    }
+        ensure     => "${sysadmin::ensure}",
+        allowdupe  => false,
+        comment    => 'Local System Administrator',
+        home       => "${homedir}",
+        managehome => true,
+        groups     => $sysadmin::groups,
+        shell      => '/bin/bash',
+    }    
+    
+    if $sysadmin::ensure == 'present' {
 
-    # delete directories on 'absent'
-    # Should find a better way to handle the dependency with the existing owner on remove
-    if ($sysadmin::ensure == 'absent') {
-        file{ "${homedir}":      ensure => 'absent'}
-        file{ "${homedir}/.ssh": ensure => 'absent'}
-    }
-    else
-    {
-        # Create the user homedir
-        file { "${homedir}":
-            ensure  => 'directory',
-            owner   => "${sysadmin::login}",
-            group   => "${sysadmin::login}",
-            mode    => '0700',
-        }
-
-        # Create the SSH directory
         file { "${homedir}/.ssh":
-            ensure  => 'directory',
-            owner   => "${sysadmin::login}",
-            group   => "${sysadmin::login}",
-            mode    => '0700',
+            ensure    => 'directory',
+            recurse   => true,
+            force     => true,
+            owner     => "${sysadmin::login}",
+            group     => "${sysadmin::login}",
+            mode      => "${sysadmin::params::dir_mode}",
         }
 
+        file { "${homedir}/bin":
+            ensure    => 'directory',
+            owner     => "${sysadmin::login}",
+            group     => "${sysadmin::login}",
+            mode      => "${sysadmin::params::dir_mode}",
+        }
+        
+        
     }
+
+
+
+
 }
 
 # ------------------------------------------------------------------------------
