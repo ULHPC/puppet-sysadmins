@@ -2,8 +2,6 @@
 # Author::    Sebastien Varrette (Sebastien.Varrette@uni.lu)
 # Copyright:: Copyright (c) 2011 Sebastien Varrette
 # License::   GPLv3
-#
-# Time-stamp: <Fri 2011-08-26 16:50 svarrette>
 # ------------------------------------------------------------------------------
 # = Class: sysadmin::params
 #
@@ -53,7 +51,7 @@ class sysadmin::params {
     # ensure attribute ('present' or 'absent')
     $ensure = $sysadmin_ensure ? {
         ''      => 'present',
-        default => "${sysadmin_ensure}",
+        default => "${sysadmin_ensure}"
     }
     
 
@@ -63,6 +61,9 @@ class sysadmin::params {
     #######################################
     $homebasedir = "/var/lib"
 
+    # directory (relative to the homedir) holding info about the real users
+    $realuserdir = ".users"
+
     
     # $packagename = $::operatingsystem ? {
     #     default => 'packagename',
@@ -71,10 +72,10 @@ class sysadmin::params {
     # $configfile = $::operatingsystem ? {
     #     default => '/path/to/sysadmin.conf',
     # }
-
-    # $configfile_mode = $::operatingsystem ? {
-    #     default => '0644',
-    # }
+    
+    $configfile_mode = $::operatingsystem ? {
+        default => '0644',
+    }
 
     # $configfile_owner = $::operatingsystem ? {
     #     default => 'root',
@@ -87,9 +88,10 @@ class sysadmin::params {
     # $configdir = $::operatingsystem ? {
     #     default => "/etc/ssh",
     # }
-    # $configdir_mode = $::operatingsystem ? {
-    #     default => '0755',
-    # }
+
+    $dir_mode = $::operatingsystem ? {
+        default => '0700',
+    }
 
     # $configdir_owner = $::operatingsystem ? {
     #     default => 'root',
