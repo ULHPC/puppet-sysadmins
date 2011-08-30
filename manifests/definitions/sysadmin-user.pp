@@ -7,6 +7,7 @@
 # = Define: sysadmin::user
 #
 # Associate to a sysadmin account (see sysadmin) a real user.
+# In practice, this will configure the file ~/.sysadminrc accoridingly
 #
 # == Pre-requisites
 #
@@ -25,8 +26,8 @@
 #   Email of the user. Ex: Sebastien.Varrette@uni.lu
 #
 # [*sshkeys*]
-#   A List of SSH (public) keys associated to the user.
-#   It takes the form of an array of hashes, each hash having the following format:
+#   An SSH (public) key associated to the user.
+#   It takes the form of hash that SHOULD respect the following format:
 #
 #          {
 #            type    => 'key type',    # encryption type used: 'ssh-dss' or 'ssh-rsa'.
@@ -36,28 +37,38 @@
 #
 # == Examples
 #
-#         # You should instanciate the class 'sysadmin'
+#         # You should have instanciate the class 'sysadmin' somewhere
 #         class { 'sysadmin':
+#            login  => 'localadmin',
 #            ensure => 'present'
 #         }
 #         [...]
+#         # Now you can add a real user, associated to the 'localadmin' account:
 #         sysadmin::user{ 'svarrette':
 #             firstname => 'Sebastien',
 #             lastname  => 'Varrette',
 #             email     => 'Sebastien.Varrette@uni.lu',
-#             sshkeys   => [
-                            # {
-                            #   type    => 'ssh-dss',
-                            #   key     => 'AAAAB3NzQS[...]skjdskf',
-                            #   comment => 'key1 comment'
-                            # },
-                            # {
-                            #   type    => 'ssh-dss',
-                            #   key     => 'AAAAB3NzQS[...]skjdskf',
-                            #   comment => 'key2 comment'
-                            # }
-                            #]
+#             sshkeys   => {
+#                             comment => 'key1 comment'
+#                             type    => 'ssh-dss',
+#                             key     => 'AAAAB3NzQS[...]skjdskf',
+#                           }
 #         }
+#
+#         # You can add later another SSH key to this user:
+#         sysadmin::user::sshkey{'key2 comment':
+#             username => 'svarrette',   # an existing username 
+#             type     => 'ssh-rsa',
+#             key      => 'AAAAB3NzaC1yc.... fxC7+/uTJinSmQ=='
+#         }
+#
+#         # Obviously, you can attach other real users to the 'localadmin' account:
+#         sysadmin::user{ 'hcartiaux':
+#             firstname => 'Hyacinthe',
+#             lastname  => 'Cartiaux',
+#             email     => 'Hyacinthe.Cartiaux@free.fr'
+#         }
+#
 #
 define sysadmin::user($firstname, $lastname, $email, $sshkeys = {}) {
 
@@ -80,25 +91,6 @@ define sysadmin::user($firstname, $lastname, $email, $sshkeys = {}) {
 
     $homedir = $sysadmin::common::homedir
 
-    # file { "${usersdir}":
-    #     ensure    => 'directory',
-    #     recurse   => true,
-    #     force     => true,
-    #     owner     => "${sysadmin::login}",
-    #     group     => "${sysadmin::login}",
-    #     mode      => '0700',
-    #     purge     => true,
-    #     require   => User["${sysadmin::login}"]
-    # }
-
-    # file { "${usersdir}/${username}.yaml":
-    #     owner  => "${sysadmin::login}",
-    #     group  => "${sysadmin::login}",
-    #     mode   => '0640',
-    #     content => template("sysadmin/user_description.erb"),
-    #     require => File["${usersdir}"]
-    # }
-
     # complete sysadminrc file
     $sysadminrc = "${homedir}/${sysadmin::params::configfilename}"
 
@@ -109,46 +101,100 @@ define sysadmin::user($firstname, $lastname, $email, $sshkeys = {}) {
         require => User["${sysadmin::login}"]
     }
 
-
-    # $SYSADMIN_LIST = {
-    #     "${username}" => {
-    #         firstname => "${firstname}",
-    #         lastname  => "${lastname}",
-    #         email     => "${email}"
-    #     }
-    # }
-
-    # file { "${homedir}/.sysadminrc":
-    #     ensure    => "${sysadmin::ensure}",
-    #     owner     => "${sysadmin::login}",
-    #     group     => "${sysadmin::login}",
-    #     mode      => "${sysadmin::params::configfile_mode}",
-    #     content   => template("sysadmin/sysadminrc.erb"),
-    # }
-
-
-
+    # Eventually add an SSH key
     if $sshkeys != {} {
         info ("NOT empty sshkeys")
-        # Hint by http://jfried83.blogspot.com/2011/06/puppet-iterating-over-hash.html
-        # $hashtest = {
-        #     'key1' => 'val1',
-        #     'key2' => 'val2'
-        # }
+        # Hint by http://jfried83.blogspot.com/2011/06/puppet-iterating-over-hash.html is not working ;(
 
+        # $comment = $sshkeys[comment]
+        # $type    = $sshkeys[type]
+        # $key     = $sshkeys[key]
 
+        sysadmin::user::sshkey { $sshkeys[comment]:
+            username => "${username}",
+            type     => $sshkeys[type],
+            key      => $sshkeys[key]
+        }
     }
 }
 
+
+# ------------------------------------------------------------------------------
+# = Define: sysadmin::user::sshkey
+#
+# Configure an additionnal SSH key under the account ${sysadmin::login} for the
+# user 'username' 
+# In practice, this will add an entry to ~${sysadmin::login}/.ssh/authorized_keys 
+# as follows:
+#
+#      environment="SYSADMIN_USER=<username>" <type> <key> <comment>
+#
+# the environment variable is important because it helps to identify who logged
+# on the ${sysadmin::login} account. You'll notice that each connection is log
+# in /var/log/auth.log as follows:
+#
+#   <date> <hostname> <sysadminlogin>[xxx]: local sysadmin logged from <ip> port <port> is <username>
+#
+# == Pre-requisites
+#
+# * The class 'sysadmin' should have been instanciated
+# * The user 'username' should have been configured and attached to this account
+#   via sysadmin::user
+#
+# == Parameters
+#
+# [*username*]
+#  An existing username (NOT a valid login!) of the user associated to this SSH
+#  key. 
+#
+# [*type*]
+#   encryption type used: 'ssh-dss' or 'ssh-rsa'.
+#
+# [*key*]
+#   The key itself; generally a long string of hex digits.
+#
+# == Name
+#
+# the name you will associate to sysadmin::user::sshkey will become the SSH key
+# comment. It has therefore to be unique
+#
+# == Examples
+#
+#         # You should have instanciate the class 'sysadmin' somewhere
+#         class { 'sysadmin':
+#            login  => 'localadmin',
+#            ensure => 'present'
+#         }
+#         [...]
+#         # you should have added a real user, associated to the 'localadmin' account:
+#         sysadmin::user{ 'svarrette':
+#             firstname => 'Sebastien',
+#             lastname  => 'Varrette',
+#             email     => 'Sebastien.Varrette@uni.lu',
+#
+#         # Now you can add an SSH key to this user:
+#         sysadmin::user::sshkey{'svarrette@falkormacbook2.uni.lux':
+#             username => 'svarrette',   
+#             type     => 'ssh-rsa',
+#             key      => 'AAAAB3NzaC1yc.... fxC7+/uTJinSmQ=='
+#         }
+#
 define sysadmin::user::sshkey($username, $type, $key) {
     $comment = $name
 
+    if (! "${sysadmin::login}") {
+        fail("The variable \$sysadmin::login is not set i.e. the class 'sysadmin' is not instancied")
+    }
+    
+    # TODO: ensure username exists!
+    
     info ("Manage SSH key for the real user '${username}'  (type = ${type}; comment = ${comment})")
     ssh_authorized_key { "${comment}":
         ensure  => $sysadmin::ensure,
         type    => "${type}",
         key     => "${key}",
         user    => "${sysadmin::login}",
+        options => "environment=\"SYSADMIN_USER=${username}\" ",
         require => Class['ssh::server']
         #        target  => "${usersdir}/${username}_authorized_keys",
         #        require => File["${usersdir}"]
