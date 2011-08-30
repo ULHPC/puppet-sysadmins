@@ -19,11 +19,11 @@
 #
 # == Actions:
 #
-# Install and configure sysadmin
+# Install and configure a local sysadmin
 #
 # == Requires:
 #
-# n/a
+# ssh::server
 #
 # == Sample Usage:
 #
@@ -33,10 +33,37 @@
 # for instance:
 #
 #         class { 'sysadmin':
-#             login   => 'localuser',
-#             ensure  => 'present',
-#             members => [ 'svarrette', 'hcartiaux' ]
+#             login   => 'localadmin',
 #         }
+#
+# This will:
+#
+# * create a local account 'localadmin'
+# * configure its homedir
+# * TODO: configure sudo
+#
+# To associate to this local account a real user, just call (see sysadmin::user definition)
+#
+#        sysadmin::user{ 'svarrette':
+#              firstname => 'Sebastien',
+#              lastname  => 'Varrette',
+#              email     => 'Sebastien.Varrette@uni.lu',
+#              sshkeys   => {
+#                  comment  => 'svarrette@falkor.uni.lux',
+#                  type     => 'ssh-dss',
+#                  key      => 'AAAAB3NzaC1kc3[...]Akdld'
+#              }
+#
+#  This will complete the file ~/.sysadminrc (used to identified who logged) and add its SSH key
+#  to the ~localadmin/.ssh/authorized_keys
+#  The sshkeys parameter is optional, you can add an SSH to a real user at any moment by
+#  invoking (see sysadmin::user::sshkey definition): 
+# 
+#        sysadmin::user::sshkey{'svarrette@anothermachine':
+#              username => 'svarrette',
+#              type     => 'ssh-rsa',
+#              key      => 'AAAAB3NzaC1yc2E[...]TOZZajX/sUGpQ=='
+#        }
 #
 # == Warnings
 #
@@ -108,6 +135,15 @@ class sysadmin::common {
             mode      => "${sysadmin::params::dirmode}",
         }
 
+        # Initialize bash
+        file { "${homedir}/.profile":
+            ensure  => "${sysadmin::ensure}",
+            owner   => "${sysadmin::login}",
+            group   => "${sysadmin::login}",
+            mode    => "${sysadmin::params::filemode}",
+            content => template("sysadmin/bash_profile.erb")
+        }
+
         # Initialize ssh directory
         file { "${homedir}/.ssh":
             ensure    => 'directory',
@@ -144,6 +180,13 @@ class sysadmin::common {
             order   => 99,
         }
     }
+
+    # Update SSH server configuration
+    require ssh::server
+
+    ssh::server::conf { 'PermitUserEnvironment': value => 'yes' }
+    ssh::server::conf::acceptenv { 'SYSADMIN_USER': }
+
 
 }
 
