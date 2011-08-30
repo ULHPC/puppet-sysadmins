@@ -79,43 +79,52 @@ define sysadmin::user($firstname, $lastname, $email, $sshkeys = {}) {
     info("attach user '$firstname $name' to the local sysadmin account '${sysadmin::login}'")
 
     $homedir = $sysadmin::common::homedir
-    $usersdir = "${homedir}/${sysadmin::params::realuserdir}"
 
-    file { "${usersdir}":
-        ensure    => 'directory',
-        recurse   => true,
-        force     => true,
-        owner     => "${sysadmin::login}",
-        group     => "${sysadmin::login}",
-        mode      => '0700',
-        purge     => true,
-        require   => User["${sysadmin::login}"]
+    # file { "${usersdir}":
+    #     ensure    => 'directory',
+    #     recurse   => true,
+    #     force     => true,
+    #     owner     => "${sysadmin::login}",
+    #     group     => "${sysadmin::login}",
+    #     mode      => '0700',
+    #     purge     => true,
+    #     require   => User["${sysadmin::login}"]
+    # }
+
+    # file { "${usersdir}/${username}.yaml":
+    #     owner  => "${sysadmin::login}",
+    #     group  => "${sysadmin::login}",
+    #     mode   => '0640',
+    #     content => template("sysadmin/user_description.erb"),
+    #     require => File["${usersdir}"]
+    # }
+
+    # complete sysadminrc file
+    $sysadminrc = "${homedir}/${sysadmin::params::configfilename}"
+
+    concat::fragment { "sysadminrc_adduser_${username}":
+        target  => "${sysadminrc}",
+        content => template("sysadmin/sysadminrc-adduser.erb"),
+        order   => 50,
+        require => User["${sysadmin::login}"]
     }
 
-    file { "${usersdir}/${username}.yaml":
-        owner  => "${sysadmin::login}",
-        group  => "${sysadmin::login}",
-        mode   => '0640',
-        content => template("sysadmin/user_description.erb"),
-        require => File["${usersdir}"]
-    }
 
-    # sysadminrc file
-    $SYSADMIN_LIST = {
-        "${username}" => {
-            firstname => "${firstname}",
-            lastname  => "${lastname}",
-            email     => "${email}"
-        }     
-    }
-    
-    file { "${homedir}/.sysadminrc":
-        ensure    => "${sysadmin::ensure}",
-        owner     => "${sysadmin::login}",
-        group     => "${sysadmin::login}",
-        mode      => "${sysadmin::params::configfile_mode}",
-        content   => template("sysadmin/sysadminrc.erb"),
-    }
+    # $SYSADMIN_LIST = {
+    #     "${username}" => {
+    #         firstname => "${firstname}",
+    #         lastname  => "${lastname}",
+    #         email     => "${email}"
+    #     }
+    # }
+
+    # file { "${homedir}/.sysadminrc":
+    #     ensure    => "${sysadmin::ensure}",
+    #     owner     => "${sysadmin::login}",
+    #     group     => "${sysadmin::login}",
+    #     mode      => "${sysadmin::params::configfile_mode}",
+    #     content   => template("sysadmin/sysadminrc.erb"),
+    # }
 
 
 
@@ -134,14 +143,13 @@ define sysadmin::user($firstname, $lastname, $email, $sshkeys = {}) {
 define sysadmin::user::sshkey($username, $type, $key) {
     $comment = $name
 
-    $usersdir = "${sysadmin::common::homedir}/${sysadmin::params::realuserdir}"
-
     info ("Manage SSH key for the real user '${username}'  (type = ${type}; comment = ${comment})")
     ssh_authorized_key { "${comment}":
         ensure  => $sysadmin::ensure,
         type    => "${type}",
         key     => "${key}",
         user    => "${sysadmin::login}",
+        require => Class['ssh::server']
         #        target  => "${usersdir}/${username}_authorized_keys",
         #        require => File["${usersdir}"]
     }
