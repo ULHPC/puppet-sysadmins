@@ -59,7 +59,6 @@ inherits sysadmin::params
         fail("sysadmin 'ensure' parameter must be either absent or present")
     }
 
-
     case $::operatingsystem {
         debian, ubuntu:         { include sysadmin::debian }
         redhat, fedora, centos: { include sysadmin::redhat }
@@ -80,8 +79,15 @@ class sysadmin::common {
     # Load the variables used in this module. Check the ssh-server-params.pp file
     require sysadmin::params
 
-    $homedir = "${sysadmin::params::homebasedir}/${sysadmin::login}"
+    include concat::setup
 
+    ############# VARIABLES ###########
+    # sysadmin user homedir
+    $homedir = "${sysadmin::params::homebasedir}/${sysadmin::login}"
+    # main configuration file for sysadmin
+    $sysadminrc = "${homedir}/${sysadmin::params::configfilename}"
+
+    ####################################
     # Create the user
     user { "${sysadmin::login}":
         ensure     => "${sysadmin::ensure}",
@@ -91,31 +97,53 @@ class sysadmin::common {
         managehome => true,
         groups     => $sysadmin::groups,
         shell      => '/bin/bash',
-    }    
-    
+    }
+
     if $sysadmin::ensure == 'present' {
 
+        file { "${homedir}":
+            ensure    => 'directory',
+            owner     => "${sysadmin::login}",
+            group     => "${sysadmin::login}",
+            mode      => "${sysadmin::params::dirmode}",
+        }
+
+        # Initialize ssh directory
         file { "${homedir}/.ssh":
             ensure    => 'directory',
             recurse   => true,
             force     => true,
             owner     => "${sysadmin::login}",
             group     => "${sysadmin::login}",
-            mode      => "${sysadmin::params::dir_mode}",
+            mode      => "${sysadmin::params::dirmode}",
         }
 
+        # prepare a bin/ directory
         file { "${homedir}/bin":
             ensure    => 'directory',
             owner     => "${sysadmin::login}",
             group     => "${sysadmin::login}",
-            mode      => "${sysadmin::params::dir_mode}",
+            mode      => "${sysadmin::params::dirmode}",
         }
-        
-        
+
+        # initialize the configuration file
+        concat { "${sysadminrc}":
+            owner => "${sysadmin::login}",
+            group => "${sysadmin::login}",
+            mode  => "${sysadmin::params::filemode}"
+        }
+        concat::fragment { "sysadminrc_header":
+            target  => "${sysadminrc}",
+            source  => "puppet:///modules/sysadmin/sysadminrc_header",
+            order   => 01,
+        }
+
+        concat::fragment { "sysadminrc_footer":
+            target  => "${sysadminrc}",
+            source  => "puppet:///modules/sysadmin/sysadminrc_footer",
+            order   => 99,
+        }
     }
-
-
-
 
 }
 

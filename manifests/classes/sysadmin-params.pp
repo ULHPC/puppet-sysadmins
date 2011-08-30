@@ -34,15 +34,15 @@ class sysadmin::params {
         default => "${sysadmin_login}",
     }
 
-    # Additonnal groups the above user is member of 
+    # Additonnal groups the above user is member of
     $groups = $sysadmin_groups ? {
         ''      => [ ],
         default => $sysadmin_groups
     }
-    
+
     # The list of users authorized to connect to the above local account
     # i.e. the real users (system administrators) identified by their respective
-    # directory (under files/users/) 
+    # directory (under files/users/)
     $members = $localsysadmin_members ? {
         ''      => [ 'svarrette', 'hcartiaux' ],
         default => $sysadmin_members
@@ -53,18 +53,28 @@ class sysadmin::params {
         ''      => 'present',
         default => "${sysadmin_ensure}"
     }
-    
 
-    
+
+
     #### MODULE INTERNAL VARIABLES  #########
     # (Modify to adapt to unsupported OSes)
     #######################################
     $homebasedir = "/var/lib"
 
-    # directory (relative to the homedir) holding info about the real users
-    $realuserdir = ".users"
+    # Main configuration file (relative to the homedir)
+    $configfilename = ".sysadminrc"
 
-    
+
+    $dirmode = $::operatingsystem ? {
+        default => '0700',
+    }
+
+    $filemode = $::operatingsystem ? {
+        default => '0644',
+    }
+
+
+
     # $packagename = $::operatingsystem ? {
     #     default => 'packagename',
     # }
@@ -72,10 +82,7 @@ class sysadmin::params {
     # $configfile = $::operatingsystem ? {
     #     default => '/path/to/sysadmin.conf',
     # }
-    
-    $configfile_mode = $::operatingsystem ? {
-        default => '0644',
-    }
+
 
     # $configfile_owner = $::operatingsystem ? {
     #     default => 'root',
@@ -88,10 +95,6 @@ class sysadmin::params {
     # $configdir = $::operatingsystem ? {
     #     default => "/etc/ssh",
     # }
-
-    $dir_mode = $::operatingsystem ? {
-        default => '0700',
-    }
 
     # $configdir_owner = $::operatingsystem ? {
     #     default => 'root',
