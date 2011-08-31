@@ -126,16 +126,24 @@ class sysadmin::common {
         shell      => '/bin/bash',
     }
 
-    if $sysadmin::ensure == 'present' {
 
+    if $sysadmin::ensure == 'present' {
         file { "${homedir}":
             ensure    => 'directory',
             owner     => "${sysadmin::login}",
             group     => "${sysadmin::login}",
             mode      => "${sysadmin::params::dirmode}",
         }
-
+        
         # Initialize bash
+        include bash
+        
+        bash::setup { "${homedir}":
+            ensure => "${sysadmin::ensure}",
+            user   => "${sysadmin::login}",
+            group  => "${sysadmin::login}",
+        }
+
         file { "${homedir}/.profile":
             ensure  => "${sysadmin::ensure}",
             owner   => "${sysadmin::login}",
@@ -185,10 +193,7 @@ class sysadmin::common {
 
         ssh::server::conf { 'PermitUserEnvironment': value => 'yes' }
         ssh::server::conf::acceptenv { 'SYSADMIN_USER': }
-    } # end ensure == 'present'
-
-
-
+    } 
 }
 
 # ------------------------------------------------------------------------------
