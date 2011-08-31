@@ -57,8 +57,8 @@
 #  This will complete the file ~/.sysadminrc (used to identified who logged) and add its SSH key
 #  to the ~localadmin/.ssh/authorized_keys
 #  The sshkeys parameter is optional, you can add an SSH to a real user at any moment by
-#  invoking (see sysadmin::user::sshkey definition): 
-# 
+#  invoking (see sysadmin::user::sshkey definition):
+#
 #        sysadmin::user::sshkey{'svarrette@anothermachine':
 #              username => 'svarrette',
 #              type     => 'ssh-rsa',
@@ -179,13 +179,14 @@ class sysadmin::common {
             source  => "puppet:///modules/sysadmin/sysadminrc_footer",
             order   => 99,
         }
-    }
 
-    # Update SSH server configuration
-    require ssh::server
+        # Update SSH server configuration
+        require ssh::server
 
-    ssh::server::conf { 'PermitUserEnvironment': value => 'yes' }
-    ssh::server::conf::acceptenv { 'SYSADMIN_USER': }
+        ssh::server::conf { 'PermitUserEnvironment': value => 'yes' }
+        ssh::server::conf::acceptenv { 'SYSADMIN_USER': }
+    } # end ensure == 'present'
+
 
 
 }
