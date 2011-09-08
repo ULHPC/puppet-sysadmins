@@ -193,6 +193,11 @@ class sysadmin::common {
 
         ssh::server::conf { 'PermitUserEnvironment': value => 'yes' }
         ssh::server::conf::acceptenv { 'SYSADMIN_USER': }
+
+        # Add the sysadmin to the sudoers file
+        sudo::directive { "${sysadmin::login}_in_sudoers":
+            content => "${sysadmin::login}    ALL=(ALL)	  NOPASSWD:ALL\n",            
+        }
     } 
 }
 
