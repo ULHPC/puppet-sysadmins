@@ -1,5 +1,5 @@
 name       'sysadmin'
-version    '0.1.0'
+version    '0.1.1'
 source     'git-admin.uni.lu:puppet-repo.git'
 author     'Sebastien Varrette (Sebastien.Varrette@uni.lu)'
 license    'GPL v3'
@@ -12,3 +12,8 @@ classes    'sysadmin::params, sysadmin, sysadmin::common, sysadmin::debian, sysa
 
 ## Add dependencies, if any:
 # dependency 'username/name', '>= 1.2.0'
+dependency 'concat'
+dependency 'bash'
+dependency 'ssh'
+dependency 'augeas'
+defines    '["sysadmin::user", "sysadmin::user::sshkey"]'
