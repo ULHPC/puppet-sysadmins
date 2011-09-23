@@ -124,6 +124,7 @@ class sysadmin::common {
         managehome => true,
         groups     => $sysadmin::groups,
         shell      => '/bin/bash',
+        require    => Class['augeas'],
     }
 
 
@@ -191,7 +192,9 @@ class sysadmin::common {
         # Update SSH server configuration
         require ssh::server
 
-        ssh::server::conf { 'PermitUserEnvironment': value => 'yes' }
+        ssh::server::conf { 'PermitUserEnvironment':
+            value   => 'yes' 
+        }
         ssh::server::conf::acceptenv { 'SYSADMIN_USER': }
 
         # Add the sysadmin to the sudoers file
