@@ -1,5 +1,5 @@
 name       'sysadmin'
-version    '0.1.1'
+version    '0.1.2'
 source     'git-admin.uni.lu:puppet-repo.git'
 author     'Sebastien Varrette (Sebastien.Varrette@uni.lu)'
 license    'GPL v3'
