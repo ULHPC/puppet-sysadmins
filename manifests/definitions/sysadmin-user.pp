@@ -57,7 +57,7 @@
 #
 #         # You can add later another SSH key to this user:
 #         sysadmin::user::sshkey{'key2 comment':
-#             username => 'svarrette',   # an existing username 
+#             username => 'svarrette',   # an existing username
 #             type     => 'ssh-rsa',
 #             key      => 'AAAAB3NzaC1yc.... fxC7+/uTJinSmQ=='
 #         }
@@ -73,7 +73,7 @@
 define sysadmin::user($firstname, $lastname, $email, $sshkeys = {}) {
 
     include sysadmin::params
-
+    
     # $name is provided by define invocation
     # guid of this entry
     $username = $name
@@ -116,6 +116,24 @@ define sysadmin::user($firstname, $lastname, $email, $sshkeys = {}) {
             key      => $sshkeys[key]
         }
     }
+
+    # Complete the /etc/aliases files for the '${sysadmin::login}' entry
+    # i.e. add this mail to the array of mails 
+    $sysadmin::params::maillist += "${email}"
+        
+    
+    # here the 'localadmin' entry contains only 'none' value
+    # for some reason, the 'onlyif' directive fail (whereas it works in augtool)
+    # I kept the entry for historical reason
+    # augeas { "/etc/aliases/${sysadmin::login}/none changed to ${email}":
+    #     context => '/files/etc/aliases',
+    #     onlyif  => "match *[name = '${sysadmin::login}' and count(value)=1]/value == [ 'none' ]",
+    #     changes => "set   *[name = '${sysadmin::login}' and value='none']/value '${email}'",
+    #     #notify  => Mailalias['root'],
+    #     require => Exec["mailalias ${sysadmin::login}"]
+    # }
+
+
 }
 
 
@@ -123,8 +141,8 @@ define sysadmin::user($firstname, $lastname, $email, $sshkeys = {}) {
 # = Define: sysadmin::user::sshkey
 #
 # Configure an additionnal SSH key under the account ${sysadmin::login} for the
-# user 'username' 
-# In practice, this will add an entry to ~${sysadmin::login}/.ssh/authorized_keys 
+# user 'username'
+# In practice, this will add an entry to ~${sysadmin::login}/.ssh/authorized_keys
 # as follows:
 #
 #      environment="SYSADMIN_USER=<username>" <type> <key> <comment>
@@ -145,7 +163,7 @@ define sysadmin::user($firstname, $lastname, $email, $sshkeys = {}) {
 #
 # [*username*]
 #  An existing username (NOT a valid login!) of the user associated to this SSH
-#  key. 
+#  key.
 #
 # [*type*]
 #   encryption type used: 'ssh-dss' or 'ssh-rsa'.
@@ -174,7 +192,7 @@ define sysadmin::user($firstname, $lastname, $email, $sshkeys = {}) {
 #
 #         # Now you can add an SSH key to this user:
 #         sysadmin::user::sshkey{'svarrette@falkormacbook2.uni.lux':
-#             username => 'svarrette',   
+#             username => 'svarrette',
 #             type     => 'ssh-rsa',
 #             key      => 'AAAAB3NzaC1yc.... fxC7+/uTJinSmQ=='
 #         }
@@ -185,9 +203,9 @@ define sysadmin::user::sshkey($username, $type, $key) {
     if (! "${sysadmin::login}") {
         fail("The variable \$sysadmin::login is not set i.e. the class 'sysadmin' is not instancied")
     }
-    
+
     # TODO: ensure username exists!
-    
+
     info ("Manage SSH key for the real user '${username}'  (type = ${type}; comment = ${comment})")
     ssh_authorized_key { "${comment}":
         ensure  => $sysadmin::ensure,
