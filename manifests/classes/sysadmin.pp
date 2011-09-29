@@ -135,10 +135,10 @@ class sysadmin::common {
             group     => "${sysadmin::login}",
             mode      => "${sysadmin::params::dirmode}",
         }
-        
+
         # Initialize bash
         include bash
-        
+
         bash::setup { "${homedir}":
             ensure => "${sysadmin::ensure}",
             user   => "${sysadmin::login}",
@@ -193,15 +193,22 @@ class sysadmin::common {
         require ssh::server
 
         ssh::server::conf { 'PermitUserEnvironment':
-            value   => 'yes' 
+            value   => 'yes'
         }
         ssh::server::conf::acceptenv { 'SYSADMIN_USER': }
 
         # Add the sysadmin to the sudoers file
         sudo::directive { "${sysadmin::login}_in_sudoers":
-            content => "${sysadmin::login}    ALL=(ALL)	  NOPASSWD:ALL\n",            
+            content => "${sysadmin::login}    ALL=(ALL)   NOPASSWD:ALL\n",
         }
-    } 
+
+        ### Add the sysadmin mails to the /etc/aliases files (create a stage to
+        ### be run at the end for this purpose 
+        stage { 'sysadmin_last': require => Stage['main'] }
+        class { 'sysadmin::mail::aliases':
+            stage => 'sysadmin_last'            
+        }
+    }
 }
 
 # ------------------------------------------------------------------------------
@@ -218,3 +225,46 @@ class sysadmin::redhat inherits sysadmin::common { }
 
 
 
+# ------------------------------------------------------------------------------
+# = Class: sysadmin::mail::aliases
+#
+# INTERNAL USAGE ONLY (inside the class 'sysadmin') - stages required to
+# externalize the code in a separate class to work (see http://docs.puppetlabs.com/guides/language_guide.html#resource-collections)
+#
+# Set mail aliases for sysadmins. This class is meant to be run in a last stage
+# by the class sysadmin once the array ${sysadmin::params::maillist} is fully
+# populated by the successive calls to sysadmin::user.  
+#
+# == Require
+#
+# * the sysadmin class should have been instanciated
+# * the stage 'sysadmin_last' should have been defined
+#
+class sysadmin::mail::aliases {
+
+    # Load the variables used in this module. 
+    require sysadmin::params
+
+    # Create an entry for ${sysadmin::login} in /etc/aliases 
+    mailalias { "${sysadmin::login}":
+        ensure    => "${sysadmin::ensure}",
+        recipient => $sysadmin::params::maillist,
+    }
+
+    # Update the root entry by adapting the current list (from the custom fact -- see
+    # modules/common/lib/facter/mail_aliases.rb) 
+    $root_maillist = split($::mail_aliases_root, ',')
+    
+    $real_root_maillist = array_include($root_maillist, "${sysadmin::login}") ? {
+        false   => [ "${sysadmin::login}", $root_maillist ],
+        default => $root_maillist
+    }
+        
+    notice("real_root_maillist : ${real_root_maillist}")
+    
+    mailalias { "root":
+        ensure    => "${sysadmin::ensure}",
+        recipient => uniq(flatten($real_root_maillist)),
+        require   => Mailalias["${sysadmin::login}"] 
+    }
+}

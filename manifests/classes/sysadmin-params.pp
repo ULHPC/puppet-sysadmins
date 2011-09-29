@@ -61,6 +61,8 @@ class sysadmin::params {
     #######################################
     $homebasedir = "/var/lib"
 
+    $maillist = []
+    
     # Main configuration file (relative to the homedir)
     $configfilename = ".sysadminrc"
 
