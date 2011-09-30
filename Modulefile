@@ -1,5 +1,5 @@
 name       'sysadmin'
-version    '0.1.2'
+version    '0.1.3'
 source     'git-admin.uni.lu:puppet-repo.git'
 author     'Sebastien Varrette (Sebastien.Varrette@uni.lu)'
 license    'GPL v3'
@@ -8,7 +8,7 @@ description 'Configure a system administrator account for (potentially) several 
 project_page 'UNKNOWN'
 
 ## List of the classes defined in this module
-classes    'sysadmin::params, sysadmin, sysadmin::common, sysadmin::debian, sysadmin::redhat'
+classes    'sysadmin::params, sysadmin, sysadmin::common, sysadmin::debian, sysadmin::redhat, sysadmin::mail::aliases'
 
 ## Add dependencies, if any:
 # dependency 'username/name', '>= 1.2.0'
