@@ -195,6 +195,13 @@ class sysadmin::common {
         ssh::server::conf { 'PermitUserEnvironment':
             value   => 'yes'
         }
+
+        # also disable root login (TODO: only if sysadmin::login is indeed
+        # associated to some real user  
+        ssh::server::conf { 'PermitRootLogin':
+            value   => 'no'
+        }
+
         ssh::server::conf::acceptenv { 'SYSADMIN_USER': }
 
         # Add the sysadmin to the sudoers file
@@ -290,7 +297,7 @@ class sysadmin::mail::aliases {
     if $sysadmin::params::maillist {
         package { $sysadmin::params::utils_packages:
             ensure => "${sysadmin::ensure}",
-        }        
+        }
     }
     
     
