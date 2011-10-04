@@ -75,11 +75,13 @@ class sysadmin::params {
         default => '0644',
     }
 
-
-
-    # $packagename = $::operatingsystem ? {
-    #     default => 'packagename',
-    # }
+    $utils_packages = $::operatingsystem ? {
+        /(?i-mx:ubuntu|debian)/	=> [
+                                    'apticron',
+                                    'logcheck', 'logcheck-database'
+                                    ],
+        default => []
+    }
 
     # $configfile = $::operatingsystem ? {
     #     default => '/path/to/sysadmin.conf',
