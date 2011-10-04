@@ -25,6 +25,9 @@
 # [*email*]
 #   Email of the user. Ex: Sebastien.Varrette@uni.lu
 #
+# [*ensure*]
+#   Present/Absent (default: $sysadmin::ensure)
+#
 # [*sshkeys*]
 #   An SSH (public) key associated to the user.
 #   It takes the form of hash that SHOULD respect the following format:
@@ -70,10 +73,10 @@
 #         }
 #
 #
-define sysadmin::user($firstname, $lastname, $email, $sshkeys = {}) {
+define sysadmin::user($firstname, $lastname, $email, $sshkeys = {}, $ensure = $sysadmin::ensure) {
 
     include sysadmin::params
-    
+
     # $name is provided by define invocation
     # guid of this entry
     $username = $name
@@ -82,25 +85,33 @@ define sysadmin::user($firstname, $lastname, $email, $sshkeys = {}) {
     if (! "${sysadmin::login}") {
         fail("The variable \$sysadmin::login is not set i.e. the class 'sysadmin' is not instancied")
     }
-    if ($sysadmin::ensure != 'present') {
-        fail("Cannot add the real user '${username}' as sysadmin::ensure is NOT set to present")
+
+    if ($sysadmin::ensure != $ensure) {
+        if ($sysadmin::ensure == 'present') {
+            warning(" sysadmin::ensure (value '${sysadmin::ensure}') differs from the ensure parameter ('${ensure}'): the real user '${username}' will be removed")
+        }
+        else {
+            fail("Cannot add the real user '${username}' as sysadmin::ensure is NOT set to present")
+        }
     }
 
     # Let's go
-    info("attach user '$firstname $name' to the local sysadmin account '${sysadmin::login}'")
+    info("attach user '$firstname $name' to the local sysadmin account '${sysadmin::login}' (with ensure = ${ensure})")
 
     $homedir = $sysadmin::common::homedir
 
     # complete sysadminrc file
     $sysadminrc = "${homedir}/${sysadmin::params::configfilename}"
 
-    concat::fragment { "sysadminrc_adduser_${username}":
-        target  => "${sysadminrc}",
-        content => template("sysadmin/sysadminrc-adduser.erb"),
-        order   => 50,
-        require => User["${sysadmin::login}"]
+    if ($sysadmin::ensure == 'present') {
+        concat::fragment { "sysadminrc_adduser_${username}":
+            target  => "${sysadminrc}",
+            ensure  => "${ensure}",
+            content => template("sysadmin/sysadminrc-adduser.erb"),
+            order   => 50,
+            require => User["${sysadmin::login}"]
+        }
     }
-
     # Eventually add an SSH key
     if $sshkeys != {} {
         info ("NOT empty sshkeys")
@@ -113,15 +124,17 @@ define sysadmin::user($firstname, $lastname, $email, $sshkeys = {}) {
         sysadmin::user::sshkey { $sshkeys[comment]:
             username => "${username}",
             type     => $sshkeys[type],
-            key      => $sshkeys[key]
+            key      => $sshkeys[key],
+            ensure   => $ensure
         }
     }
 
     # Complete the /etc/aliases files for the '${sysadmin::login}' entry
-    # i.e. add this mail to the array of mails 
-    $sysadmin::params::maillist += "${email}"
-        
-    
+    # i.e. add this mail to the array of mails
+    if ($ensure == 'present') {
+        notice("adding ${email} to the mailist [ $sysadmin::params::maillist ]")
+        $sysadmin::params::maillist += "${email}"
+    }
     # here the 'localadmin' entry contains only 'none' value
     # for some reason, the 'onlyif' directive fail (whereas it works in augtool)
     # I kept the entry for historical reason
@@ -171,6 +184,9 @@ define sysadmin::user($firstname, $lastname, $email, $sshkeys = {}) {
 # [*key*]
 #   The key itself; generally a long string of hex digits.
 #
+# [*ensure*]
+#   Present/Absent (default: $sysadmin::ensure)
+
 # == Name
 #
 # the name you will associate to sysadmin::user::sshkey will become the SSH key
@@ -197,25 +213,38 @@ define sysadmin::user($firstname, $lastname, $email, $sshkeys = {}) {
 #             key      => 'AAAAB3NzaC1yc.... fxC7+/uTJinSmQ=='
 #         }
 #
-define sysadmin::user::sshkey($username, $type, $key) {
+define sysadmin::user::sshkey($username, $type, $key, $ensure = $sysadmin::ensure) {
+
+    # $name is provided by define invocation
+    # guid of this entry
     $comment = $name
 
     if (! "${sysadmin::login}") {
         fail("The variable \$sysadmin::login is not set i.e. the class 'sysadmin' is not instancied")
     }
 
-    # TODO: ensure username exists!
+    if ($sysadmin::ensure != $ensure) {
+        if ($sysadmin::ensure == 'present') {
+            warning(" sysadmin::ensure (value '${sysadmin::ensure}') differs from the ensure parameter ('${ensure}'): the key '${comment}' will be removed")
+        }
+        else {
+            fail("Cannot add the SSH key '${comment}' as sysadmin::ensure is NOT set to present")
+        }
+    }
 
-    info ("Manage SSH key for the real user '${username}'  (type = ${type}; comment = ${comment})")
-    ssh_authorized_key { "${comment}":
-        ensure  => $sysadmin::ensure,
-        type    => "${type}",
-        key     => "${key}",
-        user    => "${sysadmin::login}",
-        options => "environment=\"SYSADMIN_USER=${username}\" ",
-        require => Class['ssh::server']
-        #        target  => "${usersdir}/${username}_authorized_keys",
-        #        require => File["${usersdir}"]
+    # TODO: ensure username exists!
+    info ("Manage SSH key for the real user '${username}'  (type = ${type}; comment = ${comment}; ensure = ${ensure})")
+    if ($sysadmin::ensure == 'present') {
+        ssh_authorized_key { "${comment}":
+            ensure  => $ensure,
+            type    => "${type}",
+            key     => "${key}",
+            user    => "${sysadmin::login}",
+            options => "environment=\"SYSADMIN_USER=${username}\" ",
+            require => Class['ssh::server']
+            #        target  => "${usersdir}/${username}_authorized_keys",
+            #        require => File["${usersdir}"]
+        }
     }
 
 

@@ -202,13 +202,16 @@ class sysadmin::common {
             content => "${sysadmin::login}    ALL=(ALL)   NOPASSWD:ALL\n",
         }
 
-        ### Add the sysadmin mails to the /etc/aliases files (create a stage to
-        ### be run at the end for this purpose 
-        stage { 'sysadmin_last': require => Stage['main'] }
-        class { 'sysadmin::mail::aliases':
-            stage => 'sysadmin_last'            
-        }
     }
+
+    ### Add (or remove) the sysadmin mails to the /etc/aliases files (create a
+    ### stage to be run at the end for this purpose
+    stage { 'sysadmin_last':  require => Stage['main'] }
+    #stage { 'sysadmin_first': before  => Stage['main'] }
+    class { 'sysadmin::mail::aliases':
+        stage => 'sysadmin_last'
+    }
+
 }
 
 # ------------------------------------------------------------------------------
@@ -233,7 +236,7 @@ class sysadmin::redhat inherits sysadmin::common { }
 #
 # Set mail aliases for sysadmins. This class is meant to be run in a last stage
 # by the class sysadmin once the array ${sysadmin::params::maillist} is fully
-# populated by the successive calls to sysadmin::user.  
+# populated by the successive calls to sysadmin::user.
 #
 # == Require
 #
@@ -242,29 +245,53 @@ class sysadmin::redhat inherits sysadmin::common { }
 #
 class sysadmin::mail::aliases {
 
-    # Load the variables used in this module. 
+    # Load the variables used in this module.
     require sysadmin::params
+    # Load the common functions
+    include common
 
-    # Create an entry for ${sysadmin::login} in /etc/aliases 
+    # Create an entry for ${sysadmin::login} in /etc/aliases
+    notice("updating ${sysadmin::login} mail aliases (on '${sysadmin::params::maillist}')")
     mailalias { "${sysadmin::login}":
         ensure    => "${sysadmin::ensure}",
         recipient => $sysadmin::params::maillist,
     }
-
+    #$required = Mailalias["${sysadmin::login}"]
+    
     # Update the root entry by adapting the current list (from the custom fact -- see
-    # modules/common/lib/facter/mail_aliases.rb) 
-    $root_maillist = split($::mail_aliases_root, ',')
-    
-    $real_root_maillist = array_include($root_maillist, "${sysadmin::login}") ? {
-        false   => [ "${sysadmin::login}", $root_maillist ],
-        default => $root_maillist
+    # modules/common/lib/facter/mail_aliases.rb)
+    $current_root_maillist = split($::mail_aliases_root, ',')
+#    warning("current_root_maillist = $current_root_maillist")
+
+    $tmp_root_maillist = array_include($current_root_maillist, "${sysadmin::login}") ? {
+        false   => [ "${sysadmin::login}", $current_root_maillist ],
+        default => $current_root_maillist
     }
-        
-    notice("real_root_maillist : ${real_root_maillist}")
-    
+#    warning("tmp_root_maillist = $tmp_root_maillist")    
+
+    # TODO: removal DO NOT work. TO BE FIXED 
+    $real_root_maillist = $sysadmin::ensure ? {
+        'present' => $tmp_root_maillist,
+        # remove ${sysadmin::login} from root mail entries if ensure != present
+        default   => array_del(flatten(uniq($tmp_root_maillist)), "${sysadmin::login}")
+    }
+
+#    warning("real_root_maillist : ${real_root_maillist}")
     mailalias { "root":
         ensure    => "${sysadmin::ensure}",
         recipient => uniq(flatten($real_root_maillist)),
-        require   => Mailalias["${sysadmin::login}"] 
+        require   => Mailalias["${sysadmin::login}"]
     }
+
+
+    # If ${sysadmin::login} is associated to at least 1 valid email address,
+    # install the additionnal packages that assume some valid email adress to
+    # notify (ex: apticron, logcheck) 
+    if $sysadmin::params::maillist {
+        package { $sysadmin::params::utils_packages:
+            ensure => "${sysadmin::ensure}",
+        }        
+    }
+    
+    
 }
