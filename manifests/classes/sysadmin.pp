@@ -201,12 +201,25 @@ class sysadmin::common {
         ssh::server::conf { 'PermitRootLogin':
             value   => 'no'
         }
-
+        exec { 'Lock the password of the root account':
+            path    => '/sbin:/usr/bin:/usr/sbin:/bin',
+            command => "passwd --lock root"           
+        }
+        
         ssh::server::conf::acceptenv { 'SYSADMIN_USER': }
 
         # Add the sysadmin to the sudoers file
         sudo::directive { "${sysadmin::login}_in_sudoers":
             content => "${sysadmin::login}    ALL=(ALL)   NOPASSWD:ALL\n",
+        }
+
+    }
+    else {
+
+        # Unlock the root account
+        exec { 'Unlock the password of the root account':
+            path    => '/sbin:/usr/bin:/usr/sbin:/bin',
+            command => "passwd --unlock root"           
         }
 
     }
