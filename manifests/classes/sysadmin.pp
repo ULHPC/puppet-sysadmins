@@ -203,7 +203,8 @@ class sysadmin::common {
         }
         exec { 'Lock the password of the ${sysadmin::login} account':
             path    => '/sbin:/usr/bin:/usr/sbin:/bin',
-            command => "passwd --lock ${sysadmin::login}"           
+            command => "passwd --lock ${sysadmin::login}",
+            user    => 'root'
         }
         
         ssh::server::conf::acceptenv { 'SYSADMIN_USER': }
@@ -219,7 +220,8 @@ class sysadmin::common {
         # Unlock the root account
         exec { 'Unlock the password of the ${sysadmin::login} account':
             path    => '/sbin:/usr/bin:/usr/sbin:/bin',
-            command => "passwd --unlock ${sysadmin::login}"           
+            command => "passwd --unlock ${sysadmin::login}",
+            user    => 'root'
         }
 
     }
