@@ -201,9 +201,9 @@ class sysadmin::common {
         ssh::server::conf { 'PermitRootLogin':
             value   => 'no'
         }
-        exec { 'Lock the password of the root account':
+        exec { 'Lock the password of the ${sysadmin::login} account':
             path    => '/sbin:/usr/bin:/usr/sbin:/bin',
-            command => "passwd --lock root"           
+            command => "passwd --lock ${sysadmin::login}"           
         }
         
         ssh::server::conf::acceptenv { 'SYSADMIN_USER': }
@@ -217,9 +217,9 @@ class sysadmin::common {
     else {
 
         # Unlock the root account
-        exec { 'Unlock the password of the root account':
+        exec { 'Unlock the password of the ${sysadmin::login} account':
             path    => '/sbin:/usr/bin:/usr/sbin:/bin',
-            command => "passwd --unlock root"           
+            command => "passwd --unlock ${sysadmin::login}"           
         }
 
     }
