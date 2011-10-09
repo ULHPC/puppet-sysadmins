@@ -28,6 +28,10 @@
 # [*ensure*]
 #   Present/Absent (default: $sysadmin::ensure)
 #
+# [*notifications*]
+#   Wheteher or not to notify the user by mail (i.e. to put is email in /etc/aliases).
+#   Default: true
+#
 # [*sshkeys*]
 #   An SSH (public) key associated to the user.
 #   It takes the form of hash that SHOULD respect the following format:
@@ -73,7 +77,15 @@
 #         }
 #
 #
-define sysadmin::user($firstname, $lastname, $email, $sshkeys = {}, $ensure = $sysadmin::ensure) {
+define sysadmin::user(
+    $firstname,
+    $lastname,
+    $email,
+    $sshkeys = {},
+    $ensure = $sysadmin::ensure,
+    $notifications = true
+)
+{
 
     include sysadmin::params
 
@@ -96,7 +108,7 @@ define sysadmin::user($firstname, $lastname, $email, $sshkeys = {}, $ensure = $s
     }
 
     # Let's go
-    info("attach user '$firstname $name' to the local sysadmin account '${sysadmin::login}' (with ensure = ${ensure})")
+    info("attach user '$firstname $name' to the local sysadmin account '${sysadmin::login}' (with ensure = ${ensure} and notification=${notification})")
 
     $homedir = $sysadmin::common::homedir
 
@@ -131,7 +143,7 @@ define sysadmin::user($firstname, $lastname, $email, $sshkeys = {}, $ensure = $s
 
     # Complete the /etc/aliases files for the '${sysadmin::login}' entry
     # i.e. add this mail to the array of mails
-    if ($ensure == 'present') {
+    if ($ensure == 'present') and ($notification) {
         notice("adding ${email} to the mailist [ $sysadmin::params::maillist ]")
         $sysadmin::params::maillist += "${email}"
     }
@@ -213,7 +225,13 @@ define sysadmin::user($firstname, $lastname, $email, $sshkeys = {}, $ensure = $s
 #             key      => 'AAAAB3NzaC1yc.... fxC7+/uTJinSmQ=='
 #         }
 #
-define sysadmin::user::sshkey($username, $type, $key, $ensure = $sysadmin::ensure) {
+define sysadmin::user::sshkey(
+    $username,
+    $type,
+    $key,
+    $ensure = $sysadmin::ensure
+)
+{
 
     # $name is provided by define invocation
     # guid of this entry
