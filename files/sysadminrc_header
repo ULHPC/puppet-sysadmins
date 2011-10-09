@@ -21,12 +21,6 @@ if [ -z "$SYSADMIN_USER" ]; then
 	logout
 fi
 
-if [ -x /usr/bin/logger ]; then
-        DISTANT_IP=`echo $SSH_CONNECTION | cut -f 1 -d ' '`
-        DISTANT_PORT=`echo $SSH_CONNECTION | cut -f 2 -d ' '`
-        logger -i -p auth.info "local sysadmin logged from $DISTANT_IP port $DISTANT_PORT is $SYSADMIN_USER"
-fi
-
 export ADM_USER=$SYSADMIN_USER
 
 case "$ADM_USER" in

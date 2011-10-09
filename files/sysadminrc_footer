@@ -3,6 +3,14 @@
   ;;
 esac
 
+
+if [ -x /usr/bin/logger ]; then
+        DISTANT_IP=`echo $SSH_CONNECTION | cut -f 1 -d ' '`
+        DISTANT_PORT=`echo $SSH_CONNECTION | cut -f 2 -d ' '`
+        logger -i -p auth.info "local sysadmin logged from $DISTANT_IP port $DISTANT_PORT is $SYSADMIN_USER ($ADM_NAME)"
+fi
+
+
 export GIT_AUTHOR_NAME=$ADM_NAME
 export GIT_AUTHOR_EMAIL=$ADM_MAIL
 
