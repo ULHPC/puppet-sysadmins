@@ -73,7 +73,7 @@
 #         sysadmin::user{ 'hcartiaux':
 #             firstname => 'Hyacinthe',
 #             lastname  => 'Cartiaux',
-#             email     => 'Hyacinthe.Cartiaux@free.fr'
+#             email     => 'Hyacinthe.Cartiaux@uni.lu'
 #         }
 #
 #
