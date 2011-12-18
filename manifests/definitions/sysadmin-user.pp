@@ -126,7 +126,7 @@ define sysadmin::user(
     }
     # Eventually add an SSH key
     if $sshkeys != {} {
-        info ("NOT empty sshkeys")
+        #info ("NOT empty sshkeys")
         # Hint by http://jfried83.blogspot.com/2011/06/puppet-iterating-over-hash.html is not working ;(
 
         # $comment = $sshkeys[comment]
