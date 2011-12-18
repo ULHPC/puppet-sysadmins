@@ -204,7 +204,8 @@ class sysadmin::common {
         exec { "Lock the password of the ${sysadmin::login} account":
             path    => '/sbin:/usr/bin:/usr/sbin:/bin',
             command => "passwd --lock ${sysadmin::login}",
-            user    => 'root'
+            user    => 'root',
+            require => User["${sysadmin::login}"]
         }
         
         ssh::server::conf::acceptenv { 'SYSADMIN_USER': }
