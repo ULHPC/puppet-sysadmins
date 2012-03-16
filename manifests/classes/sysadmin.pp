@@ -134,6 +134,7 @@ class sysadmin::common {
             owner     => "${sysadmin::login}",
             group     => "${sysadmin::login}",
             mode      => "${sysadmin::params::dirmode}",
+            require   => User["${sysadmin::login}"]
         }
 
         # Initialize bash
@@ -150,7 +151,8 @@ class sysadmin::common {
             owner   => "${sysadmin::login}",
             group   => "${sysadmin::login}",
             mode    => "${sysadmin::params::filemode}",
-            content => template("sysadmin/bash_profile.erb")
+            content => template("sysadmin/bash_profile.erb"),
+            require   => User["${sysadmin::login}"]
         }
 
         # Initialize ssh directory
@@ -161,6 +163,7 @@ class sysadmin::common {
             owner     => "${sysadmin::login}",
             group     => "${sysadmin::login}",
             mode      => "${sysadmin::params::dirmode}",
+            require   => User["${sysadmin::login}"]
         }
 
         # prepare a bin/ directory
@@ -169,13 +172,15 @@ class sysadmin::common {
             owner     => "${sysadmin::login}",
             group     => "${sysadmin::login}",
             mode      => "${sysadmin::params::dirmode}",
+            require   => User["${sysadmin::login}"]
         }
 
         # initialize the configuration file
         concat { "${sysadminrc}":
-            owner => "${sysadmin::login}",
-            group => "${sysadmin::login}",
-            mode  => "${sysadmin::params::filemode}"
+            owner   => "${sysadmin::login}",
+            group   => "${sysadmin::login}",
+            mode    => "${sysadmin::params::filemode}",
+            require => User["${sysadmin::login}"]
         }
         concat::fragment { "sysadminrc_header":
             target  => "${sysadminrc}",
