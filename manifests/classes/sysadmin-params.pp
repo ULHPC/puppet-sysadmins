@@ -30,7 +30,7 @@ class sysadmin::params {
 
     # the actual login used for the account
     $login = $sysadmin_login ? {
-        ''      => 'localuser',
+        ''      => 'localadmin',
         default => "${sysadmin_login}",
     }
 
@@ -44,7 +44,7 @@ class sysadmin::params {
     # i.e. the real users (system administrators) identified by their respective
     # directory (under files/users/)
     $members = $localsysadmin_members ? {
-        ''      => [ 'svarrette', 'hcartiaux' ],
+        ''      => [ 'svarrette', 'hcartiaux', 'fgeorgatos' ],
         default => $sysadmin_members
     }
 
