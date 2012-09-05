@@ -141,9 +141,10 @@ class sysadmin::common {
         include bash
 
         bash::setup { "${homedir}":
-            ensure => "${sysadmin::ensure}",
-            user   => "${sysadmin::login}",
-            group  => "${sysadmin::login}",
+            ensure  => "${sysadmin::ensure}",
+            user    => "${sysadmin::login}",
+            group   => "${sysadmin::login}",
+            require => File["${homedir}"]
         }
 
         file { "${homedir}/.profile":
@@ -202,7 +203,7 @@ class sysadmin::common {
         }
 
         # also disable root login (TODO: only if sysadmin::login is indeed
-        # associated to some real user  
+        # associated to some real user
         ssh::server::conf { 'PermitRootLogin':
             value   => 'no'
         }
@@ -212,7 +213,7 @@ class sysadmin::common {
             user    => 'root',
             require => User["${sysadmin::login}"]
         }
-        
+
         ssh::server::conf::acceptenv { 'SYSADMIN_USER': }
 
         # Add the sysadmin to the sudoers file
@@ -285,7 +286,7 @@ class sysadmin::mail::aliases {
         recipient => $sysadmin::params::maillist,
     }
     #$required = Mailalias["${sysadmin::login}"]
-    
+
     # Update the root entry by adapting the current list (from the custom fact -- see
     # modules/common/lib/facter/mail_aliases.rb)
     $current_root_maillist = split($::mail_aliases_root, ',')
@@ -295,9 +296,9 @@ class sysadmin::mail::aliases {
         false   => [ "${sysadmin::login}", $current_root_maillist ],
         default => $current_root_maillist
     }
-#    warning("tmp_root_maillist = $tmp_root_maillist")    
+#    warning("tmp_root_maillist = $tmp_root_maillist")
 
-    # TODO: removal DO NOT work. TO BE FIXED 
+    # TODO: removal DO NOT work. TO BE FIXED
     $real_root_maillist = $sysadmin::ensure ? {
         'present' => $tmp_root_maillist,
         # remove ${sysadmin::login} from root mail entries if ensure != present
@@ -314,12 +315,12 @@ class sysadmin::mail::aliases {
 
     # If ${sysadmin::login} is associated to at least 1 valid email address,
     # install the additionnal packages that assume some valid email adress to
-    # notify (ex: apticron, logcheck) 
+    # notify (ex: apticron, logcheck)
     if $sysadmin::params::maillist {
         package { $sysadmin::params::utils_packages:
             ensure => "${sysadmin::ensure}",
         }
     }
-    
-    
+
+
 }
