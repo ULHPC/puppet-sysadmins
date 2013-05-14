@@ -247,7 +247,20 @@ class sysadmin::common {
 # = Class: sysadmin::debian
 #
 # Specialization class for Debian systems
-class sysadmin::debian inherits sysadmin::common { }
+class sysadmin::debian inherits sysadmin::common {
+
+    # If ${sysadmin::login} is associated to at least 1 valid email address,
+    # install apticron
+    if $sysadmin::params::maillist {
+         class { 'apticron':
+             ensure       => "${sysadmin::ensure}",
+             email        => 'root',
+             diff_only    => '1',
+             notify_holds => '0'
+         }
+    }
+
+}
 
 # ------------------------------------------------------------------------------
 # = Class: sysadmin::redhat
@@ -290,13 +303,11 @@ class sysadmin::mail::aliases {
     # Update the root entry by adapting the current list (from the custom fact -- see
     # modules/common/lib/facter/mail_aliases.rb)
     $current_root_maillist = split($::mail_aliases_root, ',')
-#    warning("current_root_maillist = $current_root_maillist")
 
     $tmp_root_maillist = array_include($current_root_maillist, "${sysadmin::login}") ? {
         false   => [ "${sysadmin::login}", $current_root_maillist ],
         default => $current_root_maillist
     }
-#    warning("tmp_root_maillist = $tmp_root_maillist")
 
     # TODO: removal DO NOT work. TO BE FIXED
     $real_root_maillist = $sysadmin::ensure ? {
@@ -305,7 +316,6 @@ class sysadmin::mail::aliases {
         default   => array_del(flatten(uniq($tmp_root_maillist)), "${sysadmin::login}")
     }
 
-#    warning("real_root_maillist : ${real_root_maillist}")
     mailalias { "root":
         ensure    => "${sysadmin::ensure}",
         recipient => uniq(flatten($real_root_maillist)),
@@ -315,7 +325,7 @@ class sysadmin::mail::aliases {
 
     # If ${sysadmin::login} is associated to at least 1 valid email address,
     # install the additionnal packages that assume some valid email adress to
-    # notify (ex: apticron, logcheck)
+    # notify (ex: logwatch, logcheck)
     if $sysadmin::params::maillist {
         package { $sysadmin::params::utils_packages:
             ensure => "${sysadmin::ensure}",
