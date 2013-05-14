@@ -59,12 +59,12 @@ class sysadmin::params {
     #### MODULE INTERNAL VARIABLES  #########
     # (Modify to adapt to unsupported OSes)
     #######################################
-    $homebasedir = "/var/lib"
+    $homebasedir = '/var/lib'
 
     $maillist = []
-    
+
     # Main configuration file (relative to the homedir)
-    $configfilename = ".sysadminrc"
+    $configfilename = '.sysadminrc'
 
 
     $dirmode = $::operatingsystem ? {
@@ -76,39 +76,12 @@ class sysadmin::params {
     }
 
     $utils_packages = $::operatingsystem ? {
-        /(?i-mx:ubuntu|debian)/	=> [
-                                    'apticron',
-                                    'logcheck', 'logcheck-database'
+        /(?i-mx:ubuntu|debian)/ =>  [
+                                    'logcheck',
+                                    'logcheck-database'
                                     ],
         default => []
     }
-
-    # $configfile = $::operatingsystem ? {
-    #     default => '/path/to/sysadmin.conf',
-    # }
-
-
-    # $configfile_owner = $::operatingsystem ? {
-    #     default => 'root',
-    # }
-
-    # $configfile_group = $::operatingsystem ? {
-    #     default => 'root',
-    # }
-
-    # $configdir = $::operatingsystem ? {
-    #     default => "/etc/ssh",
-    # }
-
-    # $configdir_owner = $::operatingsystem ? {
-    #     default => 'root',
-    # }
-
-    # $configdir_group = $::operatingsystem ? {
-    #     default => 'root',
-    # }
-
-
 
 }
 
