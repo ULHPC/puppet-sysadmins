@@ -1,5 +1,5 @@
 name    'sysadmin'
-version '0.1.6'
+version '0.1.7'
 source  'git-admin.uni.lu:puppet-repo.git'
 author  'Hyacinthe Cartiaux (hyacinthe.cartiaux@uni.lu)'
 license 'GPL v3'
