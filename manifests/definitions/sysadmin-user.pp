@@ -259,7 +259,9 @@ define sysadmin::user::sshkey(
             key     => "${key}",
             user    => "${sysadmin::login}",
             options => "environment=\"SYSADMIN_USER=${username}\" ",
-            require => Class['ssh::server']
+            require => [
+                        Class['ssh::server']
+                        ]
             #        target  => "${usersdir}/${username}_authorized_keys",
             #        require => File["${usersdir}"]
         }

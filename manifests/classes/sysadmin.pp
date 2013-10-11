@@ -166,6 +166,16 @@ class sysadmin::common {
             mode      => "${sysadmin::params::dirmode}",
             require   => User["${sysadmin::login}"]
         }
+        # file { "${homedir}/.ssh/authorized_keys":
+        #     ensure    => 'present',
+        #     owner     => "${sysadmin::login}",
+        #     group     => "${sysadmin::login}",
+        #     mode      => "0640",
+        #     require   => [
+        #                   User["${sysadmin::login}"],
+        #                   File["${homedir}/.ssh"]
+        #                   ]
+        # }
 
         # prepare a bin/ directory
         file { "${homedir}/bin":
