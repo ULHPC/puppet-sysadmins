@@ -258,7 +258,7 @@ define sysadmin::user::sshkey(
             type    => "${type}",
             key     => "${key}",
             user    => "${sysadmin::login}",
-            options => "environment=\"SYSADMIN_USER=${username}\" ",
+            options => "environment=\"SYSADMIN_USER=${username}\"",
             require => [
                         Class['ssh::server']
                         ]
