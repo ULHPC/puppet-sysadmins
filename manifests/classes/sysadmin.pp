@@ -13,8 +13,6 @@
 #
 # $groups:: *Default*: []. Additonnal groups the above user is member of
 #
-# $members:: *Default*: [ 'svarrette', 'hcartiaux' ]. The list of users authorized to connect to the above local account i.e. the real users (system administrators)
-#
 # $ensure:: *Default*: 'present'. The Puppet ensure attribute (can be either 'present' or 'absent') - absent will ensure the user is removed
 #
 # == Actions:
@@ -40,7 +38,6 @@
 #
 # * create a local account 'localadmin'
 # * configure its homedir
-# * TODO: configure sudo
 #
 # To associate to this local account a real user, just call (see sysadmin::user definition)
 #
@@ -75,7 +72,6 @@
 #
 class sysadmin(
     $login   = $sysadmin::params::login,
-    $members = $sysadmin::params::members,
     $ensure  = $sysadmin::params::ensure
 )
 inherits sysadmin::params

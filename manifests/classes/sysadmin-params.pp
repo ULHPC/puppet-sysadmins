@@ -40,14 +40,6 @@ class sysadmin::params {
         default => $sysadmin_groups
     }
 
-    # The list of users authorized to connect to the above local account
-    # i.e. the real users (system administrators) identified by their respective
-    # directory (under files/users/)
-    $members = $localsysadmin_members ? {
-        ''      => [ 'svarrette', 'hcartiaux', 'fgeorgatos' ],
-        default => $sysadmin_members
-    }
-
     # ensure attribute ('present' or 'absent')
     $ensure = $sysadmin_ensure ? {
         ''      => 'present',
