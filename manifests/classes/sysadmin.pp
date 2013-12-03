@@ -162,16 +162,16 @@ class sysadmin::common {
             mode      => "${sysadmin::params::dirmode}",
             require   => User["${sysadmin::login}"]
         }
-        # file { "${homedir}/.ssh/authorized_keys":
-        #     ensure    => 'present',
-        #     owner     => "${sysadmin::login}",
-        #     group     => "${sysadmin::login}",
-        #     mode      => "0640",
-        #     require   => [
-        #                   User["${sysadmin::login}"],
-        #                   File["${homedir}/.ssh"]
-        #                   ]
-        # }
+        file { "${homedir}/.ssh/authorized_keys":
+            ensure    => 'present',
+            owner     => "${sysadmin::login}",
+            group     => "${sysadmin::login}",
+            mode      => "0600",
+            require   => [
+                          User["${sysadmin::login}"],
+                          File["${homedir}/.ssh"]
+                          ]
+        }
 
         # prepare a bin/ directory
         file { "${homedir}/bin":
@@ -216,6 +216,7 @@ class sysadmin::common {
         exec { "Lock the password of the ${sysadmin::login} account":
             path    => '/sbin:/usr/bin:/usr/sbin:/bin',
             command => "passwd --lock ${sysadmin::login}",
+            unless  => "passwd -S ${sysadmin::login} | grep '^${sysadmin::login} L'",
             user    => 'root',
             require => User["${sysadmin::login}"]
         }
@@ -234,6 +235,7 @@ class sysadmin::common {
         exec { "Unlock the password of the ${sysadmin::login} account":
             path    => '/sbin:/usr/bin:/usr/sbin:/bin',
             command => "passwd --unlock ${sysadmin::login}",
+            onlyif  => "passwd -S ${sysadmin::login} | grep '^${sysadmin::login} L'",
             user    => 'root'
         }
 
