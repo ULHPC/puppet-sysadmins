@@ -255,20 +255,7 @@ class sysadmin::common {
 # = Class: sysadmin::debian
 #
 # Specialization class for Debian systems
-class sysadmin::debian inherits sysadmin::common {
-
-    # If ${sysadmin::login} is associated to at least 1 valid email address,
-    # install apticron
-    if $sysadmin::params::maillist {
-         class { 'apticron':
-             ensure       => "${sysadmin::ensure}",
-             email        => 'root',
-             diff_only    => '1',
-             notify_holds => '0'
-         }
-    }
-
-}
+class sysadmin::debian inherits sysadmin::common { }
 
 # ------------------------------------------------------------------------------
 # = Class: sysadmin::redhat
