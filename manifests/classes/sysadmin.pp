@@ -207,12 +207,8 @@ class sysadmin::common {
         ssh::server::conf { 'PermitUserEnvironment':
             value   => 'yes'
         }
+        ssh::server::conf::acceptenv { 'SYSADMIN_USER': }
 
-        # also disable root login (TODO: only if sysadmin::login is indeed
-        # associated to some real user
-        ssh::server::conf { 'PermitRootLogin':
-            value   => 'no'
-        }
         exec { "Lock the password of the ${sysadmin::login} account":
             path    => '/sbin:/usr/bin:/usr/sbin:/bin',
             command => "passwd --lock ${sysadmin::login}",
@@ -220,8 +216,6 @@ class sysadmin::common {
             user    => 'root',
             require => User["${sysadmin::login}"]
         }
-
-        ssh::server::conf::acceptenv { 'SYSADMIN_USER': }
 
         # Add the sysadmin to the sudoers file
         sudo::directive { "${sysadmin::login}_in_sudoers":
