@@ -204,9 +204,6 @@ class sysadmin::common {
         # Update SSH server configuration
         require ssh::server
 
-        ssh::server::conf { 'PermitUserEnvironment':
-            value   => 'yes'
-        }
         ssh::server::conf::acceptenv { 'SYSADMIN_USER': }
 
         exec { "Lock the password of the ${sysadmin::login} account":
