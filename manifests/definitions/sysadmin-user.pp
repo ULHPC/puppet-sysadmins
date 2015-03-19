@@ -252,27 +252,18 @@ define sysadmin::user::sshkey(
 
     # TODO: ensure username exists!
     info ("Manage SSH key for the real user '${username}'  (type = ${type}; comment = ${comment}; ensure = ${ensure})")
-    if ($sysadmin::ensure == 'present') {
-        ssh_authorized_key { "${comment}":
-            ensure  => $ensure,
-            type    => "${type}",
-            key     => "${key}",
-            user    => "${sysadmin::login}",
-            options => "environment=\"SYSADMIN_USER=${username}\" ",
-            require => [
-                        Class['ssh::server']
-                        ]
-            #        target  => "${usersdir}/${username}_authorized_keys",
-            #        require => File["${usersdir}"]
-        }
+    ssh_authorized_key { "${comment}":
+        ensure  => $ensure,
+        type    => "${type}",
+        key     => "${key}",
+        user    => "${sysadmin::login}",
+        options => "environment=\"SYSADMIN_USER=${username}\" ",
+        require => [
+                    Class['ssh::server']
+                    ]
+        #        target  => "${usersdir}/${username}_authorized_keys",
+        #        require => File["${usersdir}"]
     }
 
-
-
 }
-
-
-
-
-
 
