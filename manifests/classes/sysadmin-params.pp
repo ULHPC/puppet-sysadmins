@@ -34,6 +34,12 @@ class sysadmin::params {
         default => "${sysadmin_login}",
     }
 
+    # redirect all mails sent to the sysadmin account to this email address
+    $email = $sysadmin_email ? {
+        ''      => '',
+        default => "${sysadmin_email}",
+    }
+
     # Additonnal groups the above user is member of
     $groups = $sysadmin_groups ? {
         ''      => [ ],
@@ -44,7 +50,7 @@ class sysadmin::params {
     # i.e. the real users (system administrators) identified by their respective
     # directory (under files/users/)
     $members = $localsysadmin_members ? {
-        ''      => [ 'svarrette', 'hcartiaux', 'fgeorgatos' ],
+        ''      => [ 'svarrette', 'hcartiaux', 'vplugaru', 'sdiehl' ],
         default => $sysadmin_members
     }
 

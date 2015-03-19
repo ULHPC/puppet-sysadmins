@@ -11,6 +11,8 @@
 #
 # $login:: *Default*: 'localuser'. The actual login used for the account
 #
+# $email:: *Default*: ''. Redirect all mails sent to the sysadmin account to this email address
+#
 # $groups:: *Default*: []. Additonnal groups the above user is member of
 #
 # $ensure:: *Default*: 'present'. The Puppet ensure attribute (can be either 'present' or 'absent') - absent will ensure the user is removed
@@ -72,6 +74,7 @@
 #
 class sysadmin(
     $login   = $sysadmin::params::login,
+    $email   = $sysadmin::params::email,
     $ensure  = $sysadmin::params::ensure
 )
 inherits sysadmin::params
@@ -217,6 +220,13 @@ class sysadmin::common {
         # Add the sysadmin to the sudoers file
         sudo::directive { "${sysadmin::login}_in_sudoers":
             content => "${sysadmin::login}    ALL=(ALL)   NOPASSWD:ALL\n",
+        }
+
+        # Complete the /etc/aliases files for the '${sysadmin::login}' entry
+        # i.e. add this mail to the array of mails
+        if ($ensure == 'present') and ($email != '') {
+            notice("adding ${email} to the mailist [ $sysadmin::params::maillist ]")
+            $sysadmin::params::maillist += "${email}"
         }
 
     }

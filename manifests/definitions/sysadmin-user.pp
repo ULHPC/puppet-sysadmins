@@ -143,7 +143,7 @@ define sysadmin::user(
 
     # Complete the /etc/aliases files for the '${sysadmin::login}' entry
     # i.e. add this mail to the array of mails
-    if ($ensure == 'present') and ($notifications) {
+    if ($ensure == 'present') and ($email != '') and ($notifications) {
         notice("adding ${email} to the mailist [ $sysadmin::params::maillist ]")
         $sysadmin::params::maillist += "${email}"
     }
