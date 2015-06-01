@@ -100,7 +100,25 @@ fi
         content => "${sysadmins::login}    ALL=(ALL)   NOPASSWD:ALL\n",
     }
 
+    if $sysadmins::ensure == 'present' {
 
+        exec { "Lock the password of the ${sysadmins::login} account":
+            path    => '/sbin:/usr/bin:/usr/sbin:/bin',
+            command => "passwd --lock ${sysadmins::login}",
+            unless  => "passwd -S ${sysadmins::login} | grep '^${sysadmins::login} L'",
+            user    => 'root',
+            require => Accounts::Account[$::sysadmins::login]
+        }
+    }
+    else {
+        # Unlock the root account
+        exec { "Unlock the password of the ${sysadmins::login} account":
+            path    => '/sbin:/usr/bin:/usr/sbin:/bin',
+            command => "passwd --unlock ${sysadmins::login}",
+            onlyif  => "passwd -S ${sysadmins::login} | grep '^${sysadmins::login} L'",
+            user    => 'root'
+        }
+    }
 
     # file { "${homedir}/.profile":
         #     ensure  => "${sysadmins::ensure}",
