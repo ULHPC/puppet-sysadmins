@@ -15,6 +15,22 @@
     {
       "name": "puppetlabs-stdlib",
       "version_requirement": ">=4.2.2 <5.0.0"
+    },
+    {
+      "name": "puppetlabs/concat",
+      "version_requirement": "2.x"
+    },
+    {
+      "name": "ULHPC/bash",
+      "version_requirement": "0.x"
+    },
+    {
+      "name": "ULHPC/sudo",
+      "version_requirement": "0.x"
+    },
+    {
+      "name": "camptocamp/accounts",
+      "version_requirement": "1.x"
     }
   ],
   "operatingsystem_support": [
