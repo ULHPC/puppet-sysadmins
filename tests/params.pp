@@ -15,12 +15,21 @@
 
 include 'sysadmins::params'
 
-$names = ['ensure', 'protocol', 'port', 'packagename']
+$names = ['ensure', 'login', 'email', 'purge_ssh_keys', 'filter_access', 'users', 'groups', 'ssh_keys', 'homebasedir', 'base_groups', 'configdir_mode', 'configfile', 'configfile_mode']
 
 notice("sysadmins::params::ensure = ${sysadmins::params::ensure}")
-notice("sysadmins::params::protocol = ${sysadmins::params::protocol}")
-notice("sysadmins::params::port = ${sysadmins::params::port}")
-notice("sysadmins::params::packagename = ${sysadmins::params::packagename}")
+notice("sysadmins::params::login = ${sysadmins::params::login}")
+notice("sysadmins::params::email = ${sysadmins::params::email}")
+notice("sysadmins::params::purge_ssh_keys = ${sysadmins::params::purge_ssh_keys}")
+notice("sysadmins::params::filter_access = ${sysadmins::params::filter_access}")
+notice("sysadmins::params::users = ${sysadmins::params::users}")
+notice("sysadmins::params::groups = ${sysadmins::params::groups}")
+notice("sysadmins::params::ssh_keys = ${sysadmins::params::ssh_keys}")
+notice("sysadmins::params::homebasedir = ${sysadmins::params::homebasedir}")
+notice("sysadmins::params::base_groups = ${sysadmins::params::base_groups}")
+notice("sysadmins::params::configdir_mode = ${sysadmins::params::configdir_mode}")
+notice("sysadmins::params::configfile = ${sysadmins::params::configfile}")
+notice("sysadmins::params::configfile_mode = ${sysadmins::params::configfile_mode}")
 
 #each($names) |$v| {
 #    $var = "sysadmins::params::${v}"
