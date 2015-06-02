@@ -31,7 +31,7 @@ class sysadmins::params {
     # ensure the presence (or absence) of sysadmins
     $ensure = $::sysadmins_ensure ? {
         ''      => 'present',
-        default => "${sysadmins_ensure}"
+        default => $sysadmins_ensure
     }
 
     # the actual login used for the local sysadmin account
@@ -92,7 +92,7 @@ class sysadmins::params {
         'Redhat' => [ 'wheel'],
         'Debian' => [ 'adm' ],
         default  => []
-    } 
+    }
 
     # $extra_packages = $::operatingsystem ? {
     #     /(?i-mx:ubuntu|debian)/        => [],

@@ -89,7 +89,7 @@ inherits sysadmin::params
         debian, ubuntu:         { include sysadmin::debian }
         redhat, fedora, centos: { include sysadmin::redhat }
         default: {
-            fail("Module $module_name is not supported on $operatingsystem")
+            fail("Module ${module_name} is not supported on ${operatingsystem}")
         }
     }
 }
@@ -115,11 +115,11 @@ class sysadmin::common {
 
     ####################################
     # Create the user
-    user { "${sysadmin::login}":
-        ensure     => "${sysadmin::ensure}",
+    user { $sysadmin::login:
+        ensure     => $sysadmin::ensure,
         allowdupe  => false,
         comment    => 'Local System Administrator',
-        home       => "${homedir}",
+        home       => $homedir,
         managehome => true,
         groups     => $sysadmin::groups,
         shell      => '/bin/bash',
@@ -128,80 +128,80 @@ class sysadmin::common {
 
 
     if $sysadmin::ensure == 'present' {
-        file { "${homedir}":
-            ensure    => 'directory',
-            owner     => "${sysadmin::login}",
-            group     => "${sysadmin::login}",
-            mode      => "${sysadmin::params::dirmode}",
-            require   => User["${sysadmin::login}"]
+        file { $homedir:
+            ensure  => 'directory',
+            owner   => $sysadmin::login,
+            group   => $sysadmin::login,
+            mode    => $sysadmin::params::dirmode,
+            require => User[$sysadmin::login]
         }
 
         # Initialize bash
         include bash
 
-        bash::setup { "${homedir}":
-            ensure  => "${sysadmin::ensure}",
-            user    => "${sysadmin::login}",
-            group   => "${sysadmin::login}",
-            require => File["${homedir}"]
+        bash::setup { $homedir:
+            ensure  => $sysadmin::ensure,
+            user    => $sysadmin::login,
+            group   => $sysadmin::login,
+            require => File[$homedir]
         }
 
         file { "${homedir}/.profile":
-            ensure  => "${sysadmin::ensure}",
-            owner   => "${sysadmin::login}",
-            group   => "${sysadmin::login}",
-            mode    => "${sysadmin::params::filemode}",
-            content => template("sysadmin/bash_profile.erb"),
-            require   => User["${sysadmin::login}"]
+            ensure  => $sysadmin::ensure,
+            owner   => $sysadmin::login,
+            group   => $sysadmin::login,
+            mode    => $sysadmin::params::filemode,
+            content => template('sysadmin/bash_profile.erb'),
+            require => User[$sysadmin::login]
         }
 
         # Initialize ssh directory
         file { "${homedir}/.ssh":
-            ensure    => 'directory',
-            recurse   => true,
-            force     => true,
-            owner     => "${sysadmin::login}",
-            group     => "${sysadmin::login}",
-            mode      => "${sysadmin::params::dirmode}",
-            require   => User["${sysadmin::login}"]
+            ensure  => 'directory',
+            recurse => true,
+            force   => true,
+            owner   => $sysadmin::login,
+            group   => $sysadmin::login,
+            mode    => $sysadmin::params::dirmode,
+            require => User[$sysadmin::login]
         }
         file { "${homedir}/.ssh/authorized_keys":
-            ensure    => 'present',
-            owner     => "${sysadmin::login}",
-            group     => "${sysadmin::login}",
-            mode      => "0600",
-            require   => [
-                          User["${sysadmin::login}"],
+            ensure  => 'present',
+            owner   => $sysadmin::login,
+            group   => $sysadmin::login,
+            mode    => '0600',
+            require => [
+                          User[$sysadmin::login],
                           File["${homedir}/.ssh"]
                           ]
         }
 
         # prepare a bin/ directory
         file { "${homedir}/bin":
-            ensure    => 'directory',
-            owner     => "${sysadmin::login}",
-            group     => "${sysadmin::login}",
-            mode      => "${sysadmin::params::dirmode}",
-            require   => User["${sysadmin::login}"]
+            ensure  => 'directory',
+            owner   => $sysadmin::login,
+            group   => $sysadmin::login,
+            mode    => $sysadmin::params::dirmode,
+            require => User[$sysadmin::login]
         }
 
         # initialize the configuration file
-        concat { "${sysadminrc}":
-            owner   => "${sysadmin::login}",
-            group   => "${sysadmin::login}",
-            mode    => "${sysadmin::params::filemode}",
-            require => User["${sysadmin::login}"]
+        concat { $sysadminrc:
+            owner   => $sysadmin::login,
+            group   => $sysadmin::login,
+            mode    => $sysadmin::params::filemode,
+            require => User[$sysadmin::login]
         }
-        concat::fragment { "sysadminrc_header":
-            target  => "${sysadminrc}",
-            source  => "puppet:///modules/sysadmin/sysadminrc_header",
-            order   => 01,
+        concat::fragment { 'sysadminrc_header':
+            target => $sysadminrc,
+            source => 'puppet:///modules/sysadmin/sysadminrc_header',
+            order  => 01,
         }
 
-        concat::fragment { "sysadminrc_footer":
-            target  => "${sysadminrc}",
-            source  => "puppet:///modules/sysadmin/sysadminrc_footer",
-            order   => 99,
+        concat::fragment { 'sysadminrc_footer':
+            target => $sysadminrc,
+            source => 'puppet:///modules/sysadmin/sysadminrc_footer',
+            order  => 99,
         }
 
         # Update SSH server configuration
@@ -214,7 +214,7 @@ class sysadmin::common {
             command => "passwd --lock ${sysadmin::login}",
             unless  => "passwd -S ${sysadmin::login} | grep '^${sysadmin::login} L'",
             user    => 'root',
-            require => User["${sysadmin::login}"]
+            require => User[$sysadmin::login]
         }
 
         # Add the sysadmin to the sudoers file
@@ -225,8 +225,8 @@ class sysadmin::common {
         # Complete the /etc/aliases files for the '${sysadmin::login}' entry
         # i.e. add this mail to the array of mails
         if ($ensure == 'present') and ($email != '') {
-            notice("adding ${email} to the mailist [ $sysadmin::params::maillist ]")
-            $sysadmin::params::maillist += "${email}"
+            notice("adding ${email} to the mailist [ ${sysadmin::params::maillist} ]")
+            $sysadmin::params::maillist += $email
         }
 
     }
@@ -290,8 +290,8 @@ class sysadmin::mail::aliases {
 
     # Create an entry for ${sysadmin::login} in /etc/aliases
     notice("updating ${sysadmin::login} mail aliases (on '${sysadmin::params::maillist}')")
-    mailalias { "${sysadmin::login}":
-        ensure    => "${sysadmin::ensure}",
+    mailalias { $sysadmin::login:
+        ensure    => $sysadmin::ensure,
         recipient => $sysadmin::params::maillist,
     }
     #$required = Mailalias["${sysadmin::login}"]
@@ -300,8 +300,8 @@ class sysadmin::mail::aliases {
     # modules/common/lib/facter/mail_aliases.rb)
     $current_root_maillist = split($::mail_aliases_root, ',')
 
-    $tmp_root_maillist = array_include($current_root_maillist, "${sysadmin::login}") ? {
-        false   => [ "${sysadmin::login}", $current_root_maillist ],
+    $tmp_root_maillist = array_include($current_root_maillist, $sysadmin::login) ? {
+        false   => [ $sysadmin::login, $current_root_maillist ],
         default => $current_root_maillist
     }
 
@@ -309,13 +309,13 @@ class sysadmin::mail::aliases {
     $real_root_maillist = $sysadmin::ensure ? {
         'present' => $tmp_root_maillist,
         # remove ${sysadmin::login} from root mail entries if ensure != present
-        default   => array_del(flatten(uniq($tmp_root_maillist)), "${sysadmin::login}")
+        default   => array_del(flatten(uniq($tmp_root_maillist)), $sysadmin::login)
     }
 
-    mailalias { "root":
-        ensure    => "${sysadmin::ensure}",
+    mailalias { 'root':
+        ensure    => $sysadmin::ensure,
         recipient => uniq(flatten($real_root_maillist)),
-        require   => Mailalias["${sysadmin::login}"]
+        require   => Mailalias[$sysadmin::login]
     }
 
 
@@ -324,7 +324,7 @@ class sysadmin::mail::aliases {
     # notify (ex: logwatch, logcheck)
     if $sysadmin::params::maillist {
         package { $sysadmin::params::utils_packages:
-            ensure => "${sysadmin::ensure}",
+            ensure => $sysadmin::ensure,
         }
     }
 

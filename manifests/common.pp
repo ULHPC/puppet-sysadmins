@@ -32,14 +32,14 @@ class sysadmins::common {
 
     # Create the user using camptocamp/account
     class { 'accounts':
-        users => {
-            "${sysadmins::login}" => {
-                ensure          => $::sysadmins::ensure,
-                comment         => 'Local System Administrator',
-                home            => "${homedir}",
-                shell           => '/bin/bash',
-                groups          => $sysgroups, #$::sysadmins::params::base_groups,
-                purge_ssh_keys  => $::sysadmins::purge_ssh_keys,
+        users          => {
+            "${sysadmins::login}"=> {
+                ensure         => $::sysadmins::ensure,
+                comment        => 'Local System Administrator',
+                home           => $homedir,
+                shell          => '/bin/bash',
+                groups         => $sysgroups, #$::sysadmins::params::base_groups,
+                purge_ssh_keys => $::sysadmins::purge_ssh_keys,
             }
         },
         ssh_keys       => $real_ssh_keys,
@@ -53,23 +53,23 @@ class sysadmins::common {
     # Initialize bash
     include bash
 
-    bash::setup { "${homedir}":
-        ensure  => "${sysadmins::ensure}",
-        user    => "${sysadmins::login}",
-        group   => "${sysadmins::login}",
+    bash::setup { $homedir:
+        ensure  => $sysadmins::ensure,
+        user    => $sysadmins::login,
+        group   => $sysadmins::login,
         require => Accounts::Account[$::sysadmins::login]
     }
 
-    bash::config { "sysadminrc":
+    bash::config { 'sysadminrc':
         ensure      => $sysadmins::filter_access ? {
-            true    => "${sysadmins::ensure}",
+            true    => $sysadmins::ensure,
             default => 'absent'
         },
         warn        => true,
         before_hook => true,
-        rootdir     => "${homedir}",
-        owner       => "${sysadmins::login}",
-        group       => "${sysadmins::login}",
+        rootdir     => $homedir,
+        owner       => $sysadmins::login,
+        group       => $sysadmins::login,
         content     => inline_template("
 # Read sysadmin configuration
 if [ -f \"\$HOME/<%= scope.lookupvar('sysadmins::params::configfile') %>\" ]; then
@@ -80,22 +80,22 @@ fi
 
 
     # initialize the configuration file
-    concat { "${sysadminrc}":
-        owner   => "${sysadmins::login}",
-        group   => "${sysadmins::login}",
-        mode    => "${sysadmins::params::configfile_mode}",
+    concat { $sysadminrc:
+        owner   => $sysadmins::login,
+        group   => $sysadmins::login,
+        mode    => $sysadmins::params::configfile_mode,
         require => Accounts::Account[$::sysadmins::login]
     }
-    concat::fragment { "sysadminrc_header":
-        target  => "${sysadminrc}",
-        source  => "puppet:///modules/${module_name}/sysadminrc_header",
-        order   => 01,
+    concat::fragment { 'sysadminrc_header':
+        target => $sysadminrc,
+        source => "puppet:///modules/${module_name}/sysadminrc_header",
+        order  => 01,
     }
 
-    concat::fragment { "sysadminrc_footer":
-        target  => "${sysadminrc}",
-        source  => "puppet:///modules/${module_name}/sysadminrc_footer",
-        order   => 99,
+    concat::fragment { 'sysadminrc_footer':
+        target => $sysadminrc,
+        source => "puppet:///modules/${module_name}/sysadminrc_footer",
+        order  => 99,
     }
 
     # Add the sysadmin to the sudoers file

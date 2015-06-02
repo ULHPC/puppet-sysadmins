@@ -31,13 +31,13 @@ class sysadmin::params {
     # the actual login used for the account
     $login = $sysadmin_login ? {
         ''      => 'localadmin',
-        default => "${sysadmin_login}",
+        default => $sysadmin_login,
     }
 
     # redirect all mails sent to the sysadmin account to this email address
     $email = $sysadmin_email ? {
         ''      => '',
-        default => "${sysadmin_email}",
+        default => $sysadmin_email,
     }
 
     # Additonnal groups the above user is member of
@@ -57,7 +57,7 @@ class sysadmin::params {
     # ensure attribute ('present' or 'absent')
     $ensure = $sysadmin_ensure ? {
         ''      => 'present',
-        default => "${sysadmin_ensure}"
+        default => $sysadmin_ensure
     }
 
 

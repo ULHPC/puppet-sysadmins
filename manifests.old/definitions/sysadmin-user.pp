@@ -94,7 +94,7 @@ define sysadmin::user(
     $username = $name
 
     # first checks
-    if (! "${sysadmin::login}") {
+    if (! $sysadmin::login) {
         fail("The variable \$sysadmin::login is not set i.e. the class 'sysadmin' is not instancied")
     }
 
@@ -108,7 +108,7 @@ define sysadmin::user(
     }
 
     # Let's go
-    info("attach user '$firstname $name' to the local sysadmin account '${sysadmin::login}' (with ensure = ${ensure} and notification=${notification})")
+    info("attach user '${firstname} ${name}' to the local sysadmin account '${sysadmin::login}' (with ensure = ${ensure} and notification=${notification})")
 
     $homedir = $sysadmin::common::homedir
 
@@ -117,11 +117,11 @@ define sysadmin::user(
 
     if ($sysadmin::ensure == 'present') {
         concat::fragment { "sysadminrc_adduser_${username}":
-            target  => "${sysadminrc}",
-            ensure  => "${ensure}",
-            content => template("sysadmin/sysadminrc-adduser.erb"),
+            target  => $sysadminrc,
+            ensure  => $ensure,
+            content => template('sysadmin/sysadminrc-adduser.erb'),
             order   => 50,
-            require => User["${sysadmin::login}"]
+            require => User[$sysadmin::login]
         }
     }
     # Eventually add an SSH key
@@ -134,7 +134,7 @@ define sysadmin::user(
         # $key     = $sshkeys[key]
 
         sysadmin::user::sshkey { $sshkeys[comment]:
-            username => "${username}",
+            username => $username,
             type     => $sshkeys[type],
             key      => $sshkeys[key],
             ensure   => $ensure
@@ -144,8 +144,8 @@ define sysadmin::user(
     # Complete the /etc/aliases files for the '${sysadmin::login}' entry
     # i.e. add this mail to the array of mails
     if ($ensure == 'present') and ($email != '') and ($notifications) {
-        notice("adding ${email} to the mailist [ $sysadmin::params::maillist ]")
-        $sysadmin::params::maillist += "${email}"
+        notice("adding ${email} to the mailist [ ${sysadmin::params::maillist} ]")
+        $sysadmin::params::maillist += $email
     }
     # here the 'localadmin' entry contains only 'none' value
     # for some reason, the 'onlyif' directive fail (whereas it works in augtool)
@@ -237,7 +237,7 @@ define sysadmin::user::sshkey(
     # guid of this entry
     $comment = $name
 
-    if (! "${sysadmin::login}") {
+    if (! $sysadmin::login) {
         fail("The variable \$sysadmin::login is not set i.e. the class 'sysadmin' is not instancied")
     }
 
@@ -252,11 +252,11 @@ define sysadmin::user::sshkey(
 
     # TODO: ensure username exists!
     info ("Manage SSH key for the real user '${username}'  (type = ${type}; comment = ${comment}; ensure = ${ensure})")
-    ssh_authorized_key { "${comment}":
+    ssh_authorized_key { $comment:
         ensure  => $ensure,
-        type    => "${type}",
-        key     => "${key}",
-        user    => "${sysadmin::login}",
+        type    => $type,
+        key     => $key,
+        user    => $sysadmin::login,
         options => "environment=\"SYSADMIN_USER=${username}\" ",
         require => [
                     Class['ssh::server']

@@ -15,7 +15,7 @@
 
 include 'sysadmins::params'
 
-$names = ["ensure", "protocol", "port", "packagename"]
+$names = ['ensure', 'protocol', 'port', 'packagename']
 
 notice("sysadmins::params::ensure = ${sysadmins::params::ensure}")
 notice("sysadmins::params::protocol = ${sysadmins::params::protocol}")
