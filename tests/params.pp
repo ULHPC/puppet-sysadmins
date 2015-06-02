@@ -15,7 +15,7 @@
 
 include 'sysadmins::params'
 
-$names = ["ensure", "login", "email", "purge_ssh_keys", "filter_access", "users", "groups", "ssh_keys", "homebasedir", "base_groups", "configdir_mode", "configfile", "configfile_mode"]
+$names = ['ensure', 'login', 'email', 'purge_ssh_keys', 'filter_access', 'users', 'groups', 'ssh_keys', 'homebasedir', 'base_groups', 'configdir_mode', 'configfile', 'configfile_mode']
 
 notice("sysadmins::params::ensure = ${sysadmins::params::ensure}")
 notice("sysadmins::params::login = ${sysadmins::params::login}")
