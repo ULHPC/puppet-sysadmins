@@ -10,7 +10,7 @@ GEM
     diffy (3.0.7)
     facter (2.4.4)
       CFPropertyList (~> 2.2.6)
-    falkorlib (0.5.6)
+    falkorlib (0.5.7)
       artii (>= 2.1)
       awesome_print (~> 1.2)
       configatron (~> 3.2)
@@ -28,7 +28,7 @@ GEM
     git_remote_branch (0.3.8)
     hiera (2.0.0)
       json_pure
-    json (1.8.2)
+    json (1.8.3)
     json_pure (1.8.2)
     license-generator (0.4.1)
       thor
