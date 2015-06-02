@@ -21,6 +21,11 @@ Configuration of a single system administrator account (localadmin by default) a
 This module implements the following elements: 
 
 * __Puppet classes__:
+    - `sysadmins` 
+    - `sysadmins::common` 
+    - `sysadmins::common::debian` 
+    - `sysadmins::common::redhat` 
+    - `sysadmins::params` 
 
 * __Puppet definitions__: 
 
@@ -35,6 +40,10 @@ See `docs/contributing.md` for more details on the steps you shall follow to hav
 See [`metadata.json`](metadata.json). In particular, this module depends on 
 
 * [puppetlabs/stdlib](https://forge.puppetlabs.com/puppetlabs/stdlib)
+* [puppetlabs/concat](https://forge.puppetlabs.com/puppetlabs/concat)
+* [ULHPC/bash](https://forge.puppetlabs.com/ULHPC/bash)
+* [ULHPC/sudo](https://forge.puppetlabs.com/ULHPC/sudo)
+* [camptocamp/accounts](https://forge.puppetlabs.com/camptocamp/accounts)
 
 ## Overview and Usage
 
