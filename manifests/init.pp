@@ -44,10 +44,11 @@ class sysadmins(
     $login          = $sysadmins::params::login,
     $email          = $sysadmins::params::email,
     $purge_ssh_keys = $sysadmins::params::purge_ssh_keys,
+    $filter_access  = $sysadmins::params::filter_access,
     $start_uid      = $sysadmins::params::start_uid,
     $start_gid      = $sysadmins::params::start_gid,
-    $groups         = $sysadmins::params::groups,
     $users          = $sysadmins::params::users,
+    $groups         = $sysadmins::params::groups,
     $ssh_keys       = $sysadmins::params::ssh_keys
 )
 inherits sysadmins::params

@@ -46,21 +46,38 @@ class sysadmins::params {
         default => $::sysadmin_email
     }
 
+    # whether to purge the authorized_keys files or not 
+    $purge_ssh_keys = $::sysadmins_purge_ssh_keys ? {
+        ''      => false,
+        default => $::sysadmins_purge_ssh_keys
+    }
+
+    # whether or not to prevent access to the sysadmin account for non-registered users
+    # (via ~<login>/.sysadminrc)
+    $filter_access = $::sysadmins_filter_access ? {
+        ''      => true,
+        default => $::sysadmins_filter_access
+    }
+
+    # # start uid / gid
+    # $start_uid = $::sysadmins_start_uid {
+    #     ''      => undef,
+    #     default => $::sysadmins_start_uid
+    # }
+    # $start_gid = $::sysadmins_start_gid {
+    #     ''      => undef,
+    #     default => $::sysadmins_start_gid 
+    # }
+    
     # Hash of the users authorized to connect to the  local sysadmin account
     # i.e. the real users (system administrators). 
     $users = {}
-
-    # $::sysadmins_users ? {
-    #     ''      => {},
-    #     default => $::sysadmins_users,
-    # }
-
     # Additonnal groups the sysadmin user is member of
     $groups = $::sysadmins_groups ? {
         ''      => [ ],
         default => $::sysadmins_groups
     }
-
+    $ssh_keys = {}
 
 
     #### MODULE INTERNAL VARIABLES  #########

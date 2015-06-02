@@ -61,7 +61,10 @@ class sysadmins::common {
     }
 
     bash::config { "sysadminrc":
-        ensure      => "${sysadmins::ensure}",
+        ensure      => $sysadmins::filter_access ? {
+            true    => "${sysadmins::ensure}",
+            default => 'absent'
+        },
         warn        => true,
         before_hook => true,
         rootdir     => "${homedir}",
@@ -70,11 +73,12 @@ class sysadmins::common {
         content     => inline_template("
 # Read sysadmin configuration
 if [ -f \"\$HOME/<%= scope.lookupvar('sysadmins::params::configfile') %>\" ]; then
-    .  ~/<%= scope.lookupvar('sysadmins::params::configfile') %>
+   .  ~/<%= scope.lookupvar('sysadmins::params::configfile') %>
 fi
         "),
     }
-    
+
+
     # initialize the configuration file
     concat { "${sysadminrc}":
         owner   => "${sysadmins::login}",
@@ -101,7 +105,6 @@ fi
     }
 
     if $sysadmins::ensure == 'present' {
-
         exec { "Lock the password of the ${sysadmins::login} account":
             path    => '/sbin:/usr/bin:/usr/sbin:/bin',
             command => "passwd --lock ${sysadmins::login}",
@@ -119,24 +122,6 @@ fi
             user    => 'root'
         }
     }
-
-    # file { "${homedir}/.profile":
-        #     ensure  => "${sysadmins::ensure}",
-        #     owner   => "${sysadmins::login}",
-        #     group   => "${sysadmins::login}",
-        #     mode    => "${sysadmins::params::configfile_mode}",
-        #     content => template("${module_name}/bash_profile.erb"),
-        #     require   => User["${sysadmins::login}"]
-        # }
-
-
-    # # initialize the configuration file
-    # concat { $sysadminrc:
-        #     ensure => $::sysadmins::ensure,
-        #     owner  => $::sysadmins::login,
-        #     group  => $::sysadmins::login,
-        #     mode   => "${sysadmins::params::configfile_mode}",
-        # }
 
 
 

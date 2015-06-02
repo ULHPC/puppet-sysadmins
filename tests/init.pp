@@ -18,6 +18,7 @@ node default {
     
     class { 'sysadmins':
         ensure         => 'present',
+        filter_access  => false,
         groups         => [ 'vagrant' ],   # can be a string
         users          => hiera_hash('sysadmins::users', {}),
         ssh_keys       => hiera_hash('sysadmins::ssh_keys', {}),
