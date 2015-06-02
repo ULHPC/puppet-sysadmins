@@ -96,9 +96,9 @@ class sysadmins::common {
         order  => 01,
     }
     concat::fragment { 'sysadminrc_allusers':
-        target => $sysadminrc,
+        target  => $sysadminrc,
         content => template("${module_name}/sysadminrc-allusers.erb"),
-        order  => 10,
+        order   => 10,
     }
 
     concat::fragment { 'sysadminrc_footer':
