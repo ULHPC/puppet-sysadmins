@@ -1,0 +1,62 @@
+{
+  "name": "ULHPC/sysadmins",
+  "version": "0.7.1",
+  "author": "UL HPC Team aka. S. Varrette, H. Cartiaux, V. Plugaru, S. Diehl",
+  "mail": "hpc-sysadmins@uni.lu",
+  "summary": "Configuration of a single system administrator account (localadmin by default) attached to (potentially) several  users",
+  "description": "Configuration of a single system administrator account (localadmin by default) attached to (potentially) several  users",
+  "license": "GPL-3.0",
+  "source": "https://github.com/ULHPC/puppet-sysadmins",
+  "docs_project": "ulhpc-puppet-sysadmins",
+  "project_page": "https://github.com/ULHPC/puppet-sysadmins",
+  "issues_url": "https://github.com/ULHPC/puppet-sysadmins/issues",
+  "forge_url": "https://forge.puppetlabs.com/ULHPC/sysadmins",
+  "dependencies": [
+    {
+      "name": "puppetlabs-stdlib",
+      "version_requirement": ">=4.2.2 <5.0.0"
+    },
+    {
+      "name": "puppetlabs/concat",
+      "version_requirement": "2.x"
+    },
+    {
+      "name": "ULHPC/bash",
+      "version_requirement": "0.x"
+    },
+    {
+      "name": "ULHPC/sudo",
+      "version_requirement": "0.x"
+    },
+    {
+      "name": "camptocamp/accounts",
+      "version_requirement": "1.x"
+    }
+  ],
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "Debian",
+      "operatingsystemrelease": [
+        "6",
+        "7"
+      ]
+    }
+  ],
+  "tags": [
+    "users",
+    "root",
+    "localadmin",
+    "sudo",
+    "ssh"
+  ],
+  "classes": [
+    "sysadmins",
+    "sysadmins::common",
+    "sysadmins::common::debian",
+    "sysadmins::common::redhat",
+    "sysadmins::params"
+  ],
+  "definitions": [
+
+  ]
+}

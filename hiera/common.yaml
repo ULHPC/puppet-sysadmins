@@ -1,0 +1,36 @@
+#
+# Users definitions
+#
+sysadmins::users:
+  svarrette:
+    firstname: Sébastien
+    lastname: Varrette
+    email: Sebastien.Varrette@uni.lu
+    office: Campus Kirchberg, E-007
+  hcartiaux:
+    firstname: Hyacinthe
+    lastname: Cartiaux
+    email: Hyacinthe.Cartiaux@uni.lu
+    office: Campus Kirchberg, E-008
+#
+# SSH keys -- should be prefixed by the appropriate login defined in sysadmins::users
+#   Format: <login>[@<comment>]:
+#               type:
+#               public:
+#
+sysadmins::ssh_keys:
+  svarrette@falkor.uni.lux:
+    type: ssh-dss
+    public: AAAAB3NzaC1kc3MA...
+  svarrette@debugkey:
+    type: ssh-rsa
+    public: 5reQfxIMsEU/4336qUHY0wAAAIBFs...
+  hcartiaux:
+    type: ssh-dss
+    public: MAAACBAKQMf834bHh4TFMecBKK...
+  sdiehl@toto:
+    type: ssh-dss
+    public: QMf834bHh4T...
+  vplugaru:
+    type: ssh-rsa
+    public: HY0wAAAIBF...
