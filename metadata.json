@@ -42,5 +42,21 @@
       ]
     }
   ],
-  "tags": ["users", "root", "localadmin", "sudo", "ssh"]
+  "tags": [
+    "users",
+    "root",
+    "localadmin",
+    "sudo",
+    "ssh"
+  ],
+  "classes": [
+    "sysadmins",
+    "sysadmins::common",
+    "sysadmins::common::debian",
+    "sysadmins::common::redhat",
+    "sysadmins::params"
+  ],
+  "definitions": [
+
+  ]
 }
