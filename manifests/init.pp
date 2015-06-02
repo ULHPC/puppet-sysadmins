@@ -63,7 +63,7 @@ inherits sysadmins::params
         debian, ubuntu:         { include sysadmins::common::debian }
         redhat, fedora, centos: { include sysadmins::common::redhat }
         default: {
-            fail("Module ${module_name} is not supported on ${operatingsystem}")
+            fail("Module ${module_name} is not supported on ${::operatingsystem}")
         }
     }
 }

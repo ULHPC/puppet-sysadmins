@@ -29,19 +29,21 @@ class sysadmins::common {
     $real_ssh_keys = parseyaml(inline_template('<%= @auth_keys.each{ |k,v| v["options"] = "environment=\"SYSADMIN_USER=#{k.gsub(/@.*/, "")}\" "}.to_yaml %>'))
     notice($real_ssh_keys)
 
+    $real_users = {
+        "${sysadmins::login}" =>
+        {
+            ensure         => $::sysadmins::ensure,
+            comment        => 'Local System Administrator',
+            home           => $homedir,
+            shell          => '/bin/bash',
+            groups         => $sysgroups, #$::sysadmins::params::base_groups,
+            purge_ssh_keys => $::sysadmins::purge_ssh_keys,
+        }
+    }
 
     # Create the user using camptocamp/account
     class { 'accounts':
-        users          => {
-            "${sysadmins::login}"=> {
-                ensure         => $::sysadmins::ensure,
-                comment        => 'Local System Administrator',
-                home           => $homedir,
-                shell          => '/bin/bash',
-                groups         => $sysgroups, #$::sysadmins::params::base_groups,
-                purge_ssh_keys => $::sysadmins::purge_ssh_keys,
-            }
-        },
+        users          => $real_users,
         ssh_keys       => $real_ssh_keys,
         purge_ssh_keys => $::sysadmins::purge_ssh_keys,
     }
@@ -60,21 +62,23 @@ class sysadmins::common {
         require => Accounts::Account[$::sysadmins::login]
     }
 
+    $bash_source_sysadminrc_ensure = $sysadmins::filter_access ? {
+        true    => $sysadmins::ensure,
+        default => 'absent'
+    }
+
     bash::config { 'sysadminrc':
-        ensure      => $sysadmins::filter_access ? {
-            true    => $sysadmins::ensure,
-            default => 'absent'
-        },
+        ensure      => $bash_source_sysadminrc_ensure,
         warn        => true,
         before_hook => true,
         rootdir     => $homedir,
         owner       => $sysadmins::login,
         group       => $sysadmins::login,
         content     => inline_template("
-# Read sysadmin configuration
-if [ -f \"\$HOME/<%= scope.lookupvar('sysadmins::params::configfile') %>\" ]; then
-   .  ~/<%= scope.lookupvar('sysadmins::params::configfile') %>
-fi
+        # Read sysadmin configuration
+        if [ -f \"\$HOME/<%= scope.lookupvar('sysadmins::params::configfile') %>\" ]; then
+        .  ~/<%= scope.lookupvar('sysadmins::params::configfile') %>
+        fi
         "),
     }
 
