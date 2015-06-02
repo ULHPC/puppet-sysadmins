@@ -22,6 +22,6 @@ if [ -d "$HOME/bin" ] ; then
 fi
 
 # Read sysadmin configuration
-if [ -f "$HOME/<%= scope.lookupvar('sysadmin::params::configfilename') %>" ]; then
-   . "$HOME/<%= scope.lookupvar('sysadmin::params::configfilename') %>"
+if [ -f "$HOME/<%= scope.lookupvar('sysadmins::params::configfile') %>" ]; then
+   . "$HOME/<%= scope.lookupvar('sysadmins::params::configfile') %>"
 fi
