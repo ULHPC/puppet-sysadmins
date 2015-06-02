@@ -6,6 +6,7 @@
 [![License](http://img.shields.io/:license-GPL3.0-blue.svg)](LICENSE)
 ![Supported Platforms](http://img.shields.io/badge/platform-debian-lightgrey.svg)
 [![Documentation Status](https://readthedocs.org/projects/ulhpc-puppet-sysadmins/badge/?version=latest)](https://readthedocs.org/projects/ulhpc-puppet-sysadmins/?badge=latest)
+[![By ULHPC](https://img.shields.io/badge/by-ULHPC-blue.svg)](http://hpc.uni.lu)
 
 Configuration of a single system administrator account (localadmin by default) attached to (potentially) several  users
 
