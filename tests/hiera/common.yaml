@@ -1,5 +1,5 @@
 #
-# Users definitions
+# Example of Users definitions
 #
 sysadmins::users:
   svarrette:
