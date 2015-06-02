@@ -77,6 +77,7 @@ class sysadmins::params {
         ''      => [ ],
         default => $::sysadmins_groups
     }
+    # Hash of the SSH keys. 
     $ssh_keys = {}
 
 
