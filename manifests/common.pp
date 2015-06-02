@@ -95,6 +95,11 @@ class sysadmins::common {
         source => "puppet:///modules/${module_name}/sysadminrc_header",
         order  => 01,
     }
+    concat::fragment { 'sysadminrc_allusers':
+        target => $sysadminrc,
+        content => template("${module_name}/sysadminrc-allusers.erb"),
+        order  => 10,
+    }
 
     concat::fragment { 'sysadminrc_footer':
         target => $sysadminrc,
