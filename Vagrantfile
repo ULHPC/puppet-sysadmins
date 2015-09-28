@@ -11,8 +11,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # (nearly) All below boxes were generated using [vagrant-vms](https://github.com/Falkor/vagrant-vms/)
     {
         :centos_7 => {
-            :box => "svarrette/centos-7",
-            :url => "https://atlas.hashicorp.com/svarrette/boxes/centos-7"
+            :box => "svarrette/centos-7-puppet",
+            :url => "https://atlas.hashicorp.com/svarrette/boxes/centos-7-puppet"
         },
         :debian_7 => {
             :box     => "svarrette/debian-7-puppet",
@@ -24,8 +24,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         config.vm.define boxname, :autostart => (! cfg[:primary].nil?), :primary => cfg[:primary] do |local|
             #local.vm.primary = true if cfg[:primary]
             local.vm.box = cfg[:box]
-            config.vm.box_check_update = false
             local.vm.host_name = ENV['VAGRANT_HOSTNAME'] || name.to_s.downcase.gsub(/_/, '-').concat(".vagrant.com")
+            #config.vm.box_check_update = false
             local.vm.provision "shell", path: ".vagrant_init.rb"
             # local.vm.provision :puppet do |puppet|
             #     puppet.hiera_config_path = 'data/hiera.yaml'
