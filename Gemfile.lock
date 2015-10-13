@@ -10,7 +10,7 @@ GEM
     diffy (3.0.7)
     facter (2.4.4)
       CFPropertyList (~> 2.2.6)
-    falkorlib (0.6.1)
+    falkorlib (0.6.2)
       artii (>= 2.1)
       awesome_print (~> 1.2)
       configatron (~> 3.2)
@@ -72,3 +72,6 @@ DEPENDENCIES
   puppet-lint (>= 0.3.2)
   puppet-syntax
   rspec-puppet
+
+BUNDLED WITH
+   1.10.6
