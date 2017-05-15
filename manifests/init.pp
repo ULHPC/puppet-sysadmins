@@ -43,6 +43,8 @@ class sysadmins(
     $ensure         = $sysadmins::params::ensure,
     $login          = $sysadmins::params::login,
     $homebasedir    = $sysadmins::params::homebasedir,
+    $managehome     = $sysadmins::params::managehome,
+    $forcelocal     = $sysadmins::params::forcelocal,
     $email          = $sysadmins::params::email,
     $purge_ssh_keys = $sysadmins::params::purge_ssh_keys,
     $filter_access  = $sysadmins::params::filter_access,
