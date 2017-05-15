@@ -47,7 +47,7 @@ class sysadmins::common {
         ssh_keys       => $real_ssh_keys,
         purge_ssh_keys => $::sysadmins::purge_ssh_keys,
         start_uid      => $::sysadmins::start_uid,
-        start_guid     => $::sysadmins::start_gid,
+        start_gid      => $::sysadmins::start_gid,
         managehome     => $::sysadmins::managehome
     }
 
