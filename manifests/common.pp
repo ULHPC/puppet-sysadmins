@@ -27,7 +27,7 @@ class sysadmins::common {
     $auth_keys = parseyaml(inline_template('<%= scope.lookupvar("sysadmins::ssh_keys").select { |k,v| scope.lookupvar("sysadmins::users").keys.find{ |e| k =~ /^#{e}/ } }.to_yaml %>'))
     # * specialize the options field for these SSH keys
     $real_ssh_keys = parseyaml(inline_template('<%= @auth_keys.each{ |k,v| v["options"] = "environment=\"SYSADMIN_USER=#{k.gsub(/@.*/, "")}\" "}.to_yaml %>'))
-    notice($real_ssh_keys)
+    #notice($real_ssh_keys)
 
     $real_users = {
         "${sysadmins::login}" =>
@@ -46,6 +46,9 @@ class sysadmins::common {
         users          => $real_users,
         ssh_keys       => $real_ssh_keys,
         purge_ssh_keys => $::sysadmins::purge_ssh_keys,
+        start_uid      => $::sysadmins::start_uid,
+        start_guid     => $::sysadmins::start_gid,
+        managehome     => $::sysadmins::managehome
     }
 
     accounts::account{ $sysadmins::login:
