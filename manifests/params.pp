@@ -29,35 +29,20 @@ class sysadmins::params {
     ###########################################
 
     # ensure the presence (or absence) of sysadmins
-    $ensure = $::sysadmins_ensure ? {
-        ''      => 'present',
-        default => $::sysadmins_ensure
-    }
+    $ensure = 'present'
 
     # the actual login used for the local sysadmin account
-    $login = $::sysadmins_login ? {
-        ''      => 'localadmin',
-        default => $::sysadmins_login,
-    }
+    $login = 'localadmin'
 
     # redirect all mails sent to the sysadmin account to this email address
-    $email = $::sysadmins_email ? {
-        ''      => '',
-        default => $::sysadmin_email
-    }
+    $email = ''
 
-    # whether to purge the authorized_keys files or not 
-    $purge_ssh_keys = $::sysadmins_purge_ssh_keys ? {
-        ''      => false,
-        default => $::sysadmins_purge_ssh_keys
-    }
+    # whether to purge the authorized_keys files or not
+    $purge_ssh_keys = false
 
     # whether or not to prevent access to the sysadmin account for non-registered users
     # (via ~<login>/.sysadminrc)
-    $filter_access = $::sysadmins_filter_access ? {
-        ''      => true,
-        default => $::sysadmins_filter_access
-    }
+    $filter_access = true
 
     # # start uid / gid
     # $start_uid = $::sysadmins_start_uid {
@@ -66,18 +51,15 @@ class sysadmins::params {
     # }
     # $start_gid = $::sysadmins_start_gid {
     #     ''      => undef,
-    #     default => $::sysadmins_start_gid 
+    #     default => $::sysadmins_start_gid
     # }
-    
+
     # Hash of the users authorized to connect to the  local sysadmin account
-    # i.e. the real users (system administrators). 
+    # i.e. the real users (system administrators).
     $users = {}
     # Additonnal groups the sysadmin user is member of
-    $groups = $::sysadmins_groups ? {
-        ''      => [ ],
-        default => $::sysadmins_groups
-    }
-    # Hash of the SSH keys. 
+    $groups = [ ]
+    # Hash of the SSH keys.
     $ssh_keys = {}
 
 
@@ -119,4 +101,3 @@ class sysadmins::params {
     }
 
 }
-

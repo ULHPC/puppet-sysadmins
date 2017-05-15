@@ -17,7 +17,7 @@ class sysadmins::common {
 
     ############# VARIABLES ###########
     # sysadmin user homedir
-    $homedir = "${sysadmins::params::homebasedir}/${sysadmins::login}"
+    $homedir = "${sysadmins::homebasedir}/${sysadmins::login}"
     # main configuration file for sysadmin
     $sysadminrc = "${homedir}/${sysadmins::params::configfile}"
     # Merge default groups with the provided onces
@@ -82,7 +82,6 @@ class sysadmins::common {
         "),
     }
 
-
     # initialize the configuration file
     concat { $sysadminrc:
         owner   => $sysadmins::login,
@@ -132,6 +131,47 @@ class sysadmins::common {
         }
     }
 
+    # Create an entry for ${sysadmins::login} in /etc/aliases
+    $mail_list = parseyaml(inline_template('<%= scope.lookupvar("sysadmins::users").collect { |k,v| v["email"] unless v["email"].nil? }.to_yaml %>'))
+
+    mailalias { $::sysadmins::login:
+        ensure    => $::sysadmins::ensure,
+        recipient => $mail_list,
+    }
+    # mailalias { "root":
+    #     ensure    => $::sysadmins::ensure,
+    #     recipient => $mail_list,
+    # }
+
+
+    # # Update the root entry by adapting the current list (from the custom fact -- see
+    # # modules/common/lib/facter/mail_aliases.rb)
+    # $current_root_maillist = split($::mail_aliases_root, ',')
+
+    # $tmp_root_maillist = array_include($current_root_maillist, $sysadmin::login) ? {
+    #     false   => [ $sysadmin::login, $current_root_maillist ],
+    #     default => $current_root_maillist
+    # }
+
+    # # TODO: removal DO NOT work. TO BE FIXED
+    # $real_root_maillist = $sysadmin::ensure ? {
+    #     'present' => $tmp_root_maillist,
+    #     # remove ${sysadmin::login} from root mail entries if ensure != present
+    #     default   => array_del(flatten(uniq($tmp_root_maillist)), $sysadmin::login)
+    # }
+
+    # mailalias { 'root':
+    #     ensure    => $sysadmin::ensure,
+    #     recipient => uniq(flatten($real_root_maillist)),
+    #     require   => Mailalias[$sysadmin::login]
+    # }
+
+
+
+
+
+    # $current_root_maillist = split($::mail_aliases_root, ',')
+    # notice("root mail = ${current_root_maillist}")
 
 
 }
