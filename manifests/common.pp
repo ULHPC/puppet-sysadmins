@@ -17,7 +17,7 @@ class sysadmins::common {
 
     ############# VARIABLES ###########
     # sysadmin user homedir
-    $homedir = "${sysadmins::params::homebasedir}/${sysadmins::login}"
+    $homedir = "${sysadmins::homebasedir}/${sysadmins::login}"
     # main configuration file for sysadmin
     $sysadminrc = "${homedir}/${sysadmins::params::configfile}"
     # Merge default groups with the provided onces
@@ -133,7 +133,7 @@ class sysadmins::common {
 
     # Create an entry for ${sysadmins::login} in /etc/aliases
     $mail_list = parseyaml(inline_template('<%= scope.lookupvar("sysadmins::users").collect { |k,v| v["email"] unless v["email"].nil? }.to_yaml %>'))
-    
+
     mailalias { "${sysadmins::login}":
         ensure    => $::sysadmins::ensure,
         recipient => $mail_list,
@@ -143,7 +143,7 @@ class sysadmins::common {
     #     recipient => $mail_list,
     # }
 
-    
+
     # # Update the root entry by adapting the current list (from the custom fact -- see
     # # modules/common/lib/facter/mail_aliases.rb)
     # $current_root_maillist = split($::mail_aliases_root, ',')
@@ -172,6 +172,6 @@ class sysadmins::common {
 
     # $current_root_maillist = split($::mail_aliases_root, ',')
     # notice("root mail = ${current_root_maillist}")
-    
+
 
 }
