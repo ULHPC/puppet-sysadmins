@@ -135,7 +135,12 @@ class sysadmins::common {
     }
 
     # Create an entry for ${sysadmins::login} in /etc/aliases
-    $mail_list = parseyaml(inline_template('<%= scope.lookupvar("sysadmins::users").collect { |k,v| v["email"] unless v["email"].nil? }.to_yaml %>'))
+    if($sysadmins::email != ''){
+      $mail_list = $sysadmins::email
+    }
+    else{
+      $mail_list = parseyaml(inline_template('<%= scope.lookupvar("sysadmins::users").collect { |k,v| v["email"] unless v["email"].nil? }.to_yaml %>'))
+    }
 
     mailalias { $::sysadmins::login:
         ensure    => $::sysadmins::ensure,

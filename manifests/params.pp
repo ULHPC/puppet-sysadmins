@@ -35,6 +35,7 @@ class sysadmins::params {
     $login = 'localadmin'
 
     # redirect all mails sent to the sysadmin account to this email address
+    # if no email is defined ('' string) will send email individually to all admins
     $email = ''
 
     # whether to purge the authorized_keys files or not
