@@ -111,7 +111,7 @@ class sysadmins::common {
 
     # Add the sysadmin to the sudoers file
     include sudo
-    sudo::directive { "${sysadmins::login}":
+    sudo::directive { $::sysadmins::login:
         content => "${sysadmins::login}    ALL=(ALL)   NOPASSWD:ALL\n",
     }
 
