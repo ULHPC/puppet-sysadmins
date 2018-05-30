@@ -111,7 +111,7 @@ class sysadmins::common {
 
     # Add the sysadmin to the sudoers file
     include sudo
-    sudo::directive { "${sysadmins::login}":
+    sudo::directive { $::sysadmins::login:
         content => "${sysadmins::login}    ALL=(ALL)   NOPASSWD:ALL\n",
     }
 
@@ -135,7 +135,12 @@ class sysadmins::common {
     }
 
     # Create an entry for ${sysadmins::login} in /etc/aliases
-    $mail_list = parseyaml(inline_template('<%= scope.lookupvar("sysadmins::users").collect { |k,v| v["email"] unless v["email"].nil? }.to_yaml %>'))
+    if($sysadmins::email != ''){
+      $mail_list = $sysadmins::email
+    }
+    else{
+      $mail_list = parseyaml(inline_template('<%= scope.lookupvar("sysadmins::users").collect { |k,v| v["email"] unless v["email"].nil? }.to_yaml %>'))
+    }
 
     mailalias { $::sysadmins::login:
         ensure    => $::sysadmins::ensure,
