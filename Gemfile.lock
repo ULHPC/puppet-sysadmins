@@ -76,6 +76,7 @@ GEM
 
 PLATFORMS
   ruby
+  x86_64-linux
 
 DEPENDENCIES
   facter (>= 1.7.0)
@@ -86,4 +87,4 @@ DEPENDENCIES
   rspec-puppet
 
 BUNDLED WITH
-   1.14.6
+   1.16.5
