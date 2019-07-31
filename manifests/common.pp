@@ -26,7 +26,7 @@ class sysadmins::common {
     # * restrict to the SSH keys having a key matching the users listed in sysadmins::users
     $auth_keys = parseyaml(inline_template('<%= scope.lookupvar("sysadmins::ssh_keys").select { |k,v| scope.lookupvar("sysadmins::users").keys.find{ |e| k =~ /^#{e}/ } }.to_yaml %>'))
     # * specialize the options field for these SSH keys
-    $real_ssh_keys = parseyaml(inline_template('<%= @auth_keys.each{ |k,v| v["options"] = "environment=\"SYSADMIN_USER=#{k.gsub(/@.*/, "")}\" "}.to_yaml %>'))
+    $real_ssh_keys = parseyaml(inline_template('<%= @auth_keys.each{ |k,v| v["options"] = "environment=\"SYSADMIN_USER=#{k.gsub(/@.*/, "")}\""}.to_yaml %>'))
     #notice($real_ssh_keys)
 
     $real_users = {
