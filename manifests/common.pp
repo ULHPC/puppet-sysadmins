@@ -13,7 +13,7 @@
 class sysadmins::common {
 
     # Load the variables used in this module. Check the params.pp file
-    require sysadmins::params
+    require ::sysadmins::params
 
     ############# VARIABLES ###########
     # sysadmin user homedir
@@ -38,17 +38,17 @@ class sysadmins::common {
             shell          => '/bin/bash',
             groups         => $sysgroups, #$::sysadmins::params::base_groups,
             purge_ssh_keys => $::sysadmins::purge_ssh_keys,
-        }
+        },
     }
 
     # Create the user using camptocamp/account
-    class { 'accounts':
+    class { '::accounts':
         users          => $real_users,
         ssh_keys       => $real_ssh_keys,
         purge_ssh_keys => $::sysadmins::purge_ssh_keys,
         start_uid      => $::sysadmins::start_uid,
         start_gid      => $::sysadmins::start_gid,
-        managehome     => $::sysadmins::managehome
+        managehome     => $::sysadmins::managehome,
     }
 
     accounts::account{ $sysadmins::login:
@@ -56,13 +56,13 @@ class sysadmins::common {
     }
 
     # Initialize bash
-    include bash
+    include ::bash
 
     bash::setup { $homedir:
         ensure  => $sysadmins::ensure,
         user    => $sysadmins::login,
         group   => $sysadmins::login,
-        require => Accounts::Account[$::sysadmins::login]
+        require => Accounts::Account[$::sysadmins::login],
     }
 
     $bash_source_sysadminrc_ensure = $sysadmins::filter_access ? {
@@ -90,12 +90,12 @@ class sysadmins::common {
         owner   => $sysadmins::login,
         group   => $sysadmins::login,
         mode    => $sysadmins::params::configfile_mode,
-        require => Accounts::Account[$::sysadmins::login]
+        require => Accounts::Account[$::sysadmins::login],
     }
     concat::fragment { 'sysadminrc_header':
         target => $sysadminrc,
         source => "puppet:///modules/${module_name}/sysadminrc_header",
-        order  => 01,
+        order  => '01',
     }
     concat::fragment { 'sysadminrc_allusers':
         target  => $sysadminrc,
@@ -110,7 +110,7 @@ class sysadmins::common {
     }
 
     # Add the sysadmin to the sudoers file
-    include sudo
+    include ::sudo
     sudo::directive { $::sysadmins::login:
         content => "${sysadmins::login}    ALL=(ALL)   NOPASSWD:ALL\n",
     }
@@ -121,7 +121,7 @@ class sysadmins::common {
             command => "passwd --lock ${sysadmins::login}",
             unless  => "passwd -S ${sysadmins::login} | grep '^${sysadmins::login} L'",
             user    => 'root',
-            require => Accounts::Account[$::sysadmins::login]
+            require => Accounts::Account[$::sysadmins::login],
         }
     }
     else {
@@ -130,7 +130,7 @@ class sysadmins::common {
             path    => '/sbin:/usr/bin:/usr/sbin:/bin',
             command => "passwd --unlock ${sysadmins::login}",
             onlyif  => "passwd -S ${sysadmins::login} | grep '^${sysadmins::login} L'",
-            user    => 'root'
+            user    => 'root',
         }
     }
 
