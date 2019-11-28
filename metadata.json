@@ -1,7 +1,7 @@
 {
   "name": "ULHPC/sysadmins",
-  "version": "0.8.5",
-  "author": "UL HPC DevOps Team aka. S. Varrette, H. Cartiaux, V. Plugaru, S. Diehl and C.Parisot",
+  "version": "0.8.6",
+  "author": "UL HPC Team",
   "mail": "hpc-sysadmins@uni.lu",
   "summary": "Configuration of a single system administrator account (localadmin by default) attached to (potentially) several  users",
   "description": "Configuration of a single system administrator account (localadmin by default) attached to (potentially) several  users",

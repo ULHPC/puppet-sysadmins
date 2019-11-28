@@ -1,9 +1,11 @@
 <% scope.lookupvar('sysadmins::users').each do |login,cfg| %>
 <% if cfg['lastname'].nil? -%>
        # ======= <%= cfg['comment'].nil? ? 'TODO: Add at least a comment field!!!' : cfg['comment'] %>
+       <%= login %>)
        export ADM_NAME="<%= cfg['comment'].nil? ? 'UNDEFINED' : cfg['comment'] %>"
 <% else -%>
        # ======= <%= cfg['firstname'].nil? ? '' : cfg['firstname'] %> <%= cfg['lastname'] %> <%= cfg['email'].nil? ? '' : cfg['email'] %>
+       <%= login %>)
        export ADM_NAME="<%= cfg['firstname'].nil? ? '' : cfg['firstname'] %> <%= cfg['lastname'] %>"
 <% end -%>
        export ADM_MAIL="<%= cfg['email'] %>"
