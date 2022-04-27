@@ -63,8 +63,8 @@ inherits sysadmins::params
     }
 
     case $::operatingsystem {
-        'debian', 'ubuntu':         { include ::sysadmins::common::debian }
-        'redhat', 'fedora', 'centos', 'rocky': { include ::sysadmins::common::redhat }
+        'debian', 'ubuntu':         { include sysadmins::common::debian }
+        'redhat', 'fedora', 'centos', 'rocky': { include sysadmins::common::redhat }
         default: {
             fail("Module ${module_name} is not supported on ${::operatingsystem}")
         }

@@ -15,7 +15,7 @@ node default {
     sudo::directive { 'vagrant':
         content => "vagrant    ALL=(ALL)   NOPASSWD:ALL\n",
     }
-    
+
     class { 'sysadmins':
         ensure         => 'present',
         filter_access  => false,
