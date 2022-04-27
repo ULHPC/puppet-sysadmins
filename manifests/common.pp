@@ -13,7 +13,7 @@
 class sysadmins::common {
 
     # Load the variables used in this module. Check the params.pp file
-    require ::sysadmins::params
+    require sysadmins::params
 
     ############# VARIABLES ###########
     # sysadmin user homedir
@@ -42,7 +42,7 @@ class sysadmins::common {
     }
 
     # Create the user using camptocamp/account
-    class { '::accounts':
+    class { 'accounts':
         users          => $real_users,
         ssh_keys       => $real_ssh_keys,
         purge_ssh_keys => $::sysadmins::purge_ssh_keys,
@@ -56,7 +56,7 @@ class sysadmins::common {
     }
 
     # Initialize bash
-    include ::bash
+    include bash
 
     bash::setup { $homedir:
         ensure  => $sysadmins::ensure,
@@ -110,7 +110,7 @@ class sysadmins::common {
     }
 
     # Add the sysadmin to the sudoers file
-    include ::sudo
+    include sudo
     sudo::directive { $::sysadmins::login:
         content => "${sysadmins::login}    ALL=(ALL)   NOPASSWD:ALL\n",
     }
