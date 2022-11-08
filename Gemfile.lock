@@ -11,8 +11,6 @@ GEM
     ansi (1.5.0)
     artii (2.1.2)
     ast (2.4.2)
-    astrolabe (1.3.1)
-      parser (~> 2.2)
     awesome_print (1.9.2)
     bcrypt_pbkdf (1.1.0)
     beaker (4.38.1)
@@ -223,12 +221,12 @@ GEM
       puppet
     rspec-support (3.1.2)
     rsync (1.0.9)
-    rubocop (0.33.0)
-      astrolabe (~> 1.3)
-      parser (>= 2.2.2.5, < 3.0)
+    rubocop (0.48.1)
+      parser (>= 2.3.3.1, < 3.0)
       powerpack (~> 0.1)
       rainbow (>= 1.99.1, < 3.0)
-      ruby-progressbar (~> 1.4)
+      ruby-progressbar (~> 1.7)
+      unicode-display_width (~> 1.0, >= 1.0.1)
     ruby-ll (2.1.2)
       ansi
       ast
@@ -279,7 +277,7 @@ GEM
       json
     tzinfo (1.2.10)
       thread_safe (~> 0.1)
-    unicode-display_width (2.3.0)
+    unicode-display_width (1.8.0)
     vmfloaty (1.7.0)
       commander (>= 4.4.3, < 4.7.0)
       faraday (~> 1.5, >= 1.5.1)
@@ -307,7 +305,7 @@ DEPENDENCIES
   rspec (< 3.2.0)
   rspec-puppet
   rspec-puppet-facts
-  rubocop (= 0.33.0)
+  rubocop (= 0.48.1)
   semantic_puppet
   simplecov (>= 0.11.0)
   simplecov-console
