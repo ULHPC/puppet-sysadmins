@@ -73,6 +73,7 @@ It accepts the following parameters:
           <login>[@<comment>]:
              type: <key_type>
              public: <public_key>
+             options: <optional option specifications see man(5) authorized_keys>
 
 Use it as follows:
 
@@ -114,6 +115,7 @@ sysadmins::ssh_keys:
   svarrette@workstation:
     type: ssh-rsa
     public: 5reQfxIMsEU/4336qUHY0wAAAIBFs...
+    options: 'from="ip-or-cidr-or-hostname,more-ip",no-agent-forwarding,[...]'
   hcartiaux:
     type: ssh-dss
     public: MAAACBAKQMf834bHh4TFMecBKK...
