@@ -64,6 +64,8 @@ class sysadmins::params {
     $groups = [ ]
     # Hash of the SSH keys.
     $ssh_keys = {}
+    # Array of String for default SSH key options (see man(5) authorized_keys)
+    $ssh_keys_opts = []
 
 
     #### MODULE INTERNAL VARIABLES  #########

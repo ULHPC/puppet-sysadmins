@@ -73,7 +73,9 @@ It accepts the following parameters:
           <login>[@<comment>]:
              type: <key_type>
              public: <public_key>
-             options: <optional option specifications see man(5) authorized_keys>
+             options: [<optional option specifications see man(5) authorized_keys>, ...]
+
+* `$ssh_keys_opts`: Array of String for default SSH authorized\_keys options to apply to every SSH key
 
 Use it as follows:
 
@@ -82,6 +84,7 @@ Use it as follows:
           groups         => [ 'vagrant' ],   # can be a string
           users          => hiera_hash('sysadmins::users', {}),
           ssh_keys       => hiera_hash('sysadmins::ssh_keys', {}),
+          ssh_keys_opts  => ['from="CIDR-IP-or-FQDN"', 'MORE-OPTION'],
           purge_ssh_keys => true,
 	  }
 
@@ -108,6 +111,8 @@ sysadmins::users:
 #               type:
 #               public:
 #
+sysadmins::ssh_keys_opts:
+  - 'from="ip-or-cidr-or-hostname,more-ip"'
 sysadmins::ssh_keys:
   svarrette:
     type: ssh-dss
@@ -115,7 +120,8 @@ sysadmins::ssh_keys:
   svarrette@workstation:
     type: ssh-rsa
     public: 5reQfxIMsEU/4336qUHY0wAAAIBFs...
-    options: 'from="ip-or-cidr-or-hostname,more-ip",no-agent-forwarding,[...]'
+    options:
+      - 'no-agent-forwarding'
   hcartiaux:
     type: ssh-dss
     public: MAAACBAKQMf834bHh4TFMecBKK...
