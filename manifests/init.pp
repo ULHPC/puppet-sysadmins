@@ -52,7 +52,8 @@ class sysadmins(
     $start_gid      = $sysadmins::params::start_gid,
     $users          = $sysadmins::params::users,
     $groups         = $sysadmins::params::groups,
-    $ssh_keys       = $sysadmins::params::ssh_keys
+    $ssh_keys       = $sysadmins::params::ssh_keys,
+    $ssh_keys_opts  = $sysadmins::params::ssh_keys_opts
 )
 inherits sysadmins::params
 {
