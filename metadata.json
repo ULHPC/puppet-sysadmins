@@ -1,6 +1,6 @@
 {
   "name": "ULHPC/sysadmins",
-  "version": "0.8.9",
+  "version": "0.9.0",
   "author": "UL HPC Team",
   "mail": "hpc-sysadmins@uni.lu",
   "summary": "Configuration of a single system administrator account (localadmin by default) attached to (potentially) several  users",
@@ -56,7 +56,5 @@
     "sysadmins::common::redhat",
     "sysadmins::params"
   ],
-  "definitions": [
-
-  ]
+  "definitions": []
 }
