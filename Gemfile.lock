@@ -263,6 +263,7 @@ GEM
     websocket (1.2.11)
 
 PLATFORMS
+  ruby
   x86_64-linux
 
 DEPENDENCIES
