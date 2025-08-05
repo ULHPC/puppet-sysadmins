@@ -35,9 +35,30 @@ FalkorLib.config.gitflow do |c|
 	}
 end
 
-
 require 'falkorlib/tasks/git'
 require 'falkorlib/tasks/puppet'
 
+Rake::Task['puppet:module:build'].clear
+
+namespace :puppet do
+  namespace :module do
+    ###########   puppet:module:build   ###########
+    desc "Build the puppet module to publish it on the Puppet Forge"
+    task :build do |t|
+      info(t.comment).to_s
+      run %( pdk build --force)
+      if File.exist?('metadata.json')
+        metadata = JSON.parse( IO.read( 'metadata.json' ) )
+        name    = metadata["name"]
+        version = metadata["version"]
+         run %( gunzip pkg/#{name}-#{version}.tar.gz)
+         run %( tar --numeric-owner -rvf pkg/#{name}-#{version}.tar --transform='s,^,#{name}-#{version}/,' metadata.json)
+         run %( gzip pkg/#{name}-#{version}.tar)
+      end
+    end # task build
+  end
+end
+
 ##############################################################################
 #TOP_SRCDIR = File.expand_path(File.join(File.dirname(__FILE__), "."))
+

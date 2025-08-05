@@ -1,3 +1,25 @@
+GIT
+  remote: https://github.com/Falkor/falkorlib.git
+  revision: ed25efbf2d98685bf2fc9d61d0ff2f14ef8e7cc8
+  ref: ed25efb
+  specs:
+    falkorlib (0.9.1)
+      activesupport (~> 6.1, >= 6.1.7.5)
+      artii (~> 2.1, >= 2.1.2)
+      awesome_print (~> 1.9, >= 1.9.2)
+      configatron (~> 3.0)
+      deep_merge (~> 1.0)
+      diffy (~> 3.4, >= 3.4.2)
+      facter (~> 4.6.1)
+      git_remote_branch (~> 0)
+      json (~> 2.6, >= 2.6.3)
+      license-generator (~> 0)
+      logger (~> 1.6)
+      minigit (~> 0)
+      rake (~> 13.1)
+      term-ansicolor (> 1.3)
+      thor (~> 1.3)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -40,8 +62,11 @@ GEM
       serverspec (~> 2)
       specinfra (~> 2)
     bigdecimal (3.2.2)
+    childprocess (5.1.0)
+      logger (~> 1.5)
     concurrent-ruby (1.3.5)
     configatron (3.2.0)
+    cri (2.15.12)
     deep_merge (1.2.2)
     diff-lcs (1.6.2)
     diffy (3.4.4)
@@ -50,36 +75,30 @@ GEM
     facter (4.6.1)
       hocon (~> 1.3)
       thor (>= 1.0.1, < 2.0)
-    facterdb (3.8.0)
+    facterdb (3.9.0)
       jgrep (~> 1.5, >= 1.5.4)
-    falkorlib (0.9.1)
-      activesupport (~> 6.1, >= 6.1.7.5)
-      artii (~> 2.1, >= 2.1.2)
-      awesome_print (~> 1.9, >= 1.9.2)
-      configatron (~> 3.0)
-      deep_merge (~> 1.0)
-      diffy (~> 3.4, >= 3.4.2)
-      facter (~> 4.6.1)
-      git_remote_branch (~> 0)
-      json (~> 2.6, >= 2.6.3)
-      license-generator (~> 0)
-      logger (~> 1.6)
-      minigit (~> 0)
-      rake (~> 13.1)
-      term-ansicolor (> 1.3)
-      thor (~> 1.3)
+    faraday (2.13.4)
+      faraday-net_http (>= 2.0, < 3.5)
+      json
+      logger
+    faraday-follow_redirects (0.3.0)
+      faraday (>= 1, < 3)
+    faraday-net_http (3.4.1)
+      net-http (>= 0.5.0)
     fast_gettext (2.4.0)
       prime
+    ffi (1.17.2-x86_64-linux-gnu)
     forwardable (1.3.3)
     git_remote_branch (0.3.8)
     hiera (3.12.0)
+    hitimes (2.0.0)
     hocon (1.4.0)
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
     in-parallel (1.0.1)
     inifile (3.0.0)
     jgrep (1.5.4)
-    json (2.13.1)
+    json (2.13.2)
     json-schema (5.2.1)
       addressable (~> 2.8)
       bigdecimal (~> 3.1)
@@ -97,14 +116,35 @@ GEM
     mocha (2.7.1)
       ruby2_keywords (>= 0.0.5)
     multi_json (1.17.0)
+    net-http (0.6.0)
+      uri
     net-scp (4.1.0)
       net-ssh (>= 2.6.5, < 8.0.0)
     net-ssh (7.3.0)
     net-telnet (0.2.0)
     parallel (1.27.0)
-    parser (3.3.8.0)
+    parser (3.3.9.0)
       ast (~> 2.4.1)
       racc
+    pastel (0.8.0)
+      tty-color (~> 0.5)
+    pathspec (1.1.3)
+    pdk (3.4.0)
+      bundler (>= 2.1.0, < 3.0.0)
+      childprocess (~> 5.0)
+      cri (~> 2.15.11)
+      deep_merge (~> 1.2.2)
+      diff-lcs (>= 1.5.0)
+      ffi (>= 1.15.5, < 2.0.0)
+      hitimes (= 2.0.0)
+      json-schema (~> 5.0)
+      minitar (~> 0.8)
+      pathspec (~> 1.1)
+      puppet-modulebuilder (~> 1.0)
+      puppet_forge (~> 5.0)
+      tty-prompt (~> 0.23)
+      tty-spinner (~> 0.9)
+      tty-which (~> 0.5)
     prime (0.1.4)
       forwardable
       singleton
@@ -136,11 +176,19 @@ GEM
       puppet-lint (>= 2.1, < 4)
     puppet-lint-version_comparison-check (1.1.0)
       puppet-lint (>= 1.0, < 4)
+    puppet-modulebuilder (1.1.0)
+      minitar (~> 0.9)
+      pathspec (>= 0.2.1, < 3.0.0)
     puppet-resource_api (1.9.0)
       hocon (>= 1.0)
-    puppet-syntax (2.6.1)
-      puppet (>= 5)
-      rake
+    puppet-syntax (5.0.0)
+      puppet (>= 7, < 9)
+      rake (~> 13.1)
+    puppet_forge (5.0.4)
+      faraday (~> 2.0)
+      faraday-follow_redirects (~> 0.3.0)
+      minitar (< 1.0.0)
+      semantic_puppet (~> 1.0)
     puppetlabs_spec_helper (1.1.1)
       mocha
       puppet-lint
@@ -150,7 +198,7 @@ GEM
     racc (1.8.1)
     rainbow (3.1.1)
     rake (13.3.0)
-    regexp_parser (2.10.0)
+    regexp_parser (2.11.0)
     rexml (3.4.1)
     rspec (3.1.0)
       rspec-core (~> 3.1.0)
@@ -221,12 +269,27 @@ GEM
     terminal-table (4.0.0)
       unicode-display_width (>= 1.1.1, < 4)
     thor (1.4.0)
-    tins (1.38.0)
+    tins (1.39.1)
       bigdecimal
       sync
+    tty-color (0.6.0)
+    tty-cursor (0.7.1)
+    tty-prompt (0.23.1)
+      pastel (~> 0.8)
+      tty-reader (~> 0.8)
+    tty-reader (0.9.0)
+      tty-cursor (~> 0.7)
+      tty-screen (~> 0.8)
+      wisper (~> 2.0)
+    tty-screen (0.8.2)
+    tty-spinner (0.9.3)
+      tty-cursor (~> 0.7)
+    tty-which (0.5.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (1.8.0)
+    uri (1.0.3)
+    wisper (2.0.1)
     zeitwerk (2.7.3)
 
 PLATFORMS
@@ -236,8 +299,9 @@ DEPENDENCIES
   beaker (~> 6.1.0)
   beaker-puppet_install_helper
   beaker-rspec
-  falkorlib
+  falkorlib!
   metadata-json-lint
+  pdk
   puppet (~> 7)
   puppet-lint-absolute_classname-check
   puppet-lint-classes_and_types_beginning_with_digits-check
@@ -246,7 +310,7 @@ DEPENDENCIES
   puppet-lint-trailing_comma-check
   puppet-lint-unquoted_string-check
   puppet-lint-version_comparison-check
-  puppet-syntax (~> 2.6)
+  puppet-syntax (< 6.0.0)
   puppetlabs_spec_helper
   rake
   rspec (< 3.2.0)

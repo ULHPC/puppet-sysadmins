@@ -1,17 +1,14 @@
 # A sample Gemfile
 source "https://rubygems.org"
 
-gem 'falkorlib' #, :path => '~/git/github.com/Falkor/falkorlib'
+gem 'falkorlib', git: 'https://github.com/Falkor/falkorlib.git', ref: 'ed25efb'
 
-# Puppet stuff
-#gem 'puppetlabs_spec_helper', '>= 0.1.0'
-
-gem 'puppet-syntax',           '~> 2.6'
-#gem 'facter',                 '>= 1.7.0'
+gem 'puppet-syntax', '< 6.0.0'
 
 group :test do
   gem "rake"
   gem "puppet", ENV['PUPPET_GEM_VERSION'] || '~> 7'
+  gem "pdk"
   gem "rspec", '< 3.2.0'
   gem "rspec-puppet"
   gem "puppetlabs_spec_helper"
