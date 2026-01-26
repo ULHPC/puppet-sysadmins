@@ -2,8 +2,6 @@ The documentation for this puppet module is handled by [Read the Docs](https://r
 
 * [Reference documentation](https://docs.readthedocs.org/en/latest/)
 
-By default, the [puppet-sysadmins](https://github.com/ULHPC/puppet-sysadmins) repository is bound to the [ulhpc-puppet-sysadmins](http://ulhpc-puppet-sysadmins.rtfd.org) project on Read the Docs (to avoid confusion with other sysadmins projects). 
-
 You might wish to generate locally the docs:
 
 * Install [`mkdocs`](http://www.mkdocs.org/#installation)
