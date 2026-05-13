@@ -7,4 +7,4 @@
 # = Class: sysadmins::common::debian
 #
 # Specialization class for Debian systems
-class sysadmins::common::debian inherits sysadmins::common { }
+class sysadmins::common::debian inherits sysadmins::common {}
