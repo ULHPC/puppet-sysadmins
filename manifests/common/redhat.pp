@@ -7,4 +7,4 @@
 # = Class: sysadmins::common::redhat
 #
 # Specialization class for Redhat systems
-class sysadmins::common::redhat inherits sysadmins::common { }
+class sysadmins::common::redhat inherits sysadmins::common {}

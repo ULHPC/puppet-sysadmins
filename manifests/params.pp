@@ -22,87 +22,84 @@
 # [Remember: No empty lines between comments and class definition]
 #
 class sysadmins::params {
+  ######## DEFAULTS FOR VARIABLES USERS CAN SET ##########################
+  # (Here are set the defaults, provide your custom variables externally)
+  # (The default used is in the line with '')
+  ###########################################
 
-    ######## DEFAULTS FOR VARIABLES USERS CAN SET ##########################
-    # (Here are set the defaults, provide your custom variables externally)
-    # (The default used is in the line with '')
-    ###########################################
+  # ensure the presence (or absence) of sysadmins
+  $ensure = 'present'
 
-    # ensure the presence (or absence) of sysadmins
-    $ensure = 'present'
+  # the actual login used for the local sysadmin account
+  $login = 'localadmin'
 
-    # the actual login used for the local sysadmin account
-    $login = 'localadmin'
+  # redirect all mails sent to the sysadmin account to this email address
+  # if no email is defined ('' string) will send email individually to all admins
+  $email = ''
 
-    # redirect all mails sent to the sysadmin account to this email address
-    # if no email is defined ('' string) will send email individually to all admins
-    $email = ''
+  # whether to purge the authorized_keys files or not
+  $purge_ssh_keys = true
 
-    # whether to purge the authorized_keys files or not
-    $purge_ssh_keys = true
+  # whether or not to prevent access to the sysadmin account for non-registered users
+  # (via ~<login>/.sysadminrc)
+  $filter_access = true
 
-    # whether or not to prevent access to the sysadmin account for non-registered users
-    # (via ~<login>/.sysadminrc)
-    $filter_access = true
+  # Sets the lowest uid (resp. gid) for non system users (resp. groups).
+  # This is a system setting and also affects users (resp. groups) created outside of this module.
+  $start_uid = undef
+  $start_gid = undef
 
-    # Sets the lowest uid (resp. gid) for non system users (resp. groups).
-    # This is a system setting and also affects users (resp. groups) created outside of this module.
-    $start_uid = undef
-    $start_gid = undef
+  # Manage the homedir
+  $managehome = true
 
-    # Manage the homedir
-    $managehome = true
+  # Set the resource "user" parameter so that the users are not created/supressed
+  # in external user directories (i.e. LDAP).
+  $forcelocal = true
 
-    # Set the resource "user" parameter so that the users are not created/supressed
-    # in external user directories (i.e. LDAP).
-    $forcelocal = true
+  # Hash of the users authorized to connect to the  local sysadmin account
+  # i.e. the real users (system administrators).
+  $users = {}
+  # Additonnal groups the sysadmin user is member of
+  $groups = []
+  # Hash of the SSH keys.
+  $ssh_keys = {}
+  # Array of String for default SSH key options (see man(5) authorized_keys)
+  $ssh_keys_opts = []
 
-    # Hash of the users authorized to connect to the  local sysadmin account
-    # i.e. the real users (system administrators).
-    $users = {}
-    # Additonnal groups the sysadmin user is member of
-    $groups = [ ]
-    # Hash of the SSH keys.
-    $ssh_keys = {}
-    # Array of String for default SSH key options (see man(5) authorized_keys)
-    $ssh_keys_opts = []
+  #### MODULE INTERNAL VARIABLES  #########
+  # (Modify to adapt to unsupported OSes)
+  #######################################
+  $homebasedir = $facts['os']['family'] ? {
+    'Redhat' => '/home',      # Simpler to handle SELinux on Redhat-like systems
+    default  => '/var/lib'
+  }
 
+  $base_groups = $facts['os']['family'] ? {
+    'Redhat' => ['wheel'],
+    'Debian' => ['adm'],
+    default  => []
+  }
 
-    #### MODULE INTERNAL VARIABLES  #########
-    # (Modify to adapt to unsupported OSes)
-    #######################################
-    $homebasedir = $facts['os']['family'] ?  {
-        'Redhat' => '/home',      # Simpler to handle SELinux on Redhat-like systems
-        default  => '/var/lib'
-    }
+  # $extra_packages = $::operatingsystem ? {
+  #     /(?i-mx:ubuntu|debian)/        => [],
+  #     /(?i-mx:centos|fedora|redhat)/ => [],
+  #     default => []
+  # }
 
-    $base_groups = $facts['os']['family'] ? {
-        'Redhat' => [ 'wheel'],
-        'Debian' => [ 'adm' ],
-        default  => []
-    }
+  $configdir_mode = $facts['os']['name'] ? {
+    default => '0700',
+  }
+  # $configdir_owner = $::operatingsystem ? {
+  #     default => 'root',
+  # }
+  # $configdir_group = $::operatingsystem ? {
+  #     default => 'root',
+  # }
 
-    # $extra_packages = $::operatingsystem ? {
-    #     /(?i-mx:ubuntu|debian)/        => [],
-    #     /(?i-mx:centos|fedora|redhat)/ => [],
-    #     default => []
-    # }
-
-    $configdir_mode = $facts['os']['name'] ? {
-        default => '0700',
-    }
-    # $configdir_owner = $::operatingsystem ? {
-    #     default => 'root',
-    # }
-    # $configdir_group = $::operatingsystem ? {
-    #     default => 'root',
-    # }
-
-    $configfile = $facts['os']['name'] ? {
-        default => '.sysadminrc',
-    }
-    $configfile_mode = $facts['os']['name'] ? {
-        default => '0644',
-    }
-
+  $configfile = $facts['os']['name'] ? {
+    default => '.sysadminrc',
+  }
+  $configfile_mode = $facts['os']['name'] ? {
+    default => '0644',
+  }
 }

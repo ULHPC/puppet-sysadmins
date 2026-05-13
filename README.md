@@ -1,5 +1,3 @@
--*- mode: markdown; mode: visual-line;  -*-
-
 # Sysadmins Puppet Module
 
 [![Puppet Forge](http://img.shields.io/puppetforge/v/ULHPC/sysadmins.svg)](https://forge.puppetlabs.com/ULHPC/sysadmins)
@@ -8,7 +6,7 @@
 
 Configuration of a single system administrator account (localadmin by default) attached to (potentially) several  users
 
-      Copyright (c) 2019 UL HPC Team <hpc-sysadmins@uni.lu>
+      Copyright (c) 2026 UL HPC Team <hpc-sysadmins@uni.lu>
 
 
 | [Project Page](https://github.com/ULHPC/puppet-sysadmins) | [Sources](https://github.com/ULHPC/puppet-sysadmins) | [Issues](https://github.com/ULHPC/puppet-sysadmins/issues) |
@@ -30,9 +28,6 @@ This module implements the following elements:
 
 All these components are configured through a set of variables you will find in
 [`manifests/params.pp`](manifests/params.pp).
-
-_Note_: the various operations that can be conducted from this repository are piloted from a [`Rakefile`](https://github.com/ruby/rake) and assumes you have a running [Ruby](https://www.ruby-lang.org/en/) installation.
-See `docs/contributing.md` for more details on the steps you shall follow to have this `Rakefile` working properly.
 
 ## Dependencies
 
@@ -132,8 +127,6 @@ sysadmins::ssh_keys:
     public: HY0wAAAIBF...
 ```
 
-See also [`tests/init.pp`](tests/init.pp)
-
 This will create the `localadmin` account. In the example above, the `~localadmin/.ssh/authorized_keys` holds the SSH keys of only `svarrette` and `hcartiaux` users as they are the ones listed in `sysadmins::users`. Example:
 
        $> cat ~localadmin/.ssh/authorized_keys
@@ -159,25 +152,15 @@ or, if you prefer to work on the git version:
 
      mod "ULHPC/sysadmins",
          :git => 'https://github.com/ULHPC/puppet-sysadmins',
-         :ref => 'production'
+         :ref => 'main'
 
-## Issues / Feature request
+## Developments / Issues / Contributing to the code
 
-You can submit bug / issues / feature request using the [ULHPC/sysadmins Puppet Module Tracker](https://github.com/ULHPC/puppet-sysadmins/issues).
+This Puppet Module has been implemented in the context of the [UL HPC](http://hpc.uni.lu) Platform of the [University of Luxembourg](http://www.uni.lu).
+It relies on [Vox Pupuli modulesync](https://github.com/voxpupuli/modulesync) for its organization.
 
-## Developments / Contributing to the code
-
-If you want to contribute to the code, you shall be aware of the way this module is organized.
-These elements are detailed on [`docs/contributing.md`](contributing/index.md).
-
+You can submit bugs / issues / feature requests using the [ULHPC/sysadmins Puppet Module Tracker](https://github.com/ULHPC/puppet-sysadmins/issues).
 You are more than welcome to contribute to its development by [sending a pull request](https://help.github.com/articles/using-pull-requests).
-
-## Puppet modules tests within a Vagrant box
-
-The best way to test this module in a non-intrusive way is to rely on [Vagrant](http://www.vagrantup.com/).
-The `Vagrantfile` at the root of the repository pilot the provisioning various vagrant boxes available on [Vagrant cloud](https://atlas.hashicorp.com/boxes/search?utf8=%E2%9C%93&sort=&provider=virtualbox&q=svarrette) you can use to test this module.
-
-See [`docs/vagrant.md`](vagrant.md) for more details.
 
 ## Licence
 
