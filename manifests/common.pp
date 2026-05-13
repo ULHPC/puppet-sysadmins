@@ -173,3 +173,4 @@ class sysadmins::common {
 
   # $current_root_maillist = split($::mail_aliases_root, ',')
   # notice("root mail = ${current_root_maillist}")}
+}
