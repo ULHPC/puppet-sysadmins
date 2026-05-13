@@ -1,6 +1,6 @@
 {
   "name": "ULHPC-sysadmins",
-  "version": "0.9.0",
+  "version": "1.0.0",
   "author": "UL HPC Team",
   "summary": "Configuration of a single system administrator account (localadmin by default) attached to (potentially) several  users",
   "license": "GPL-3.0",
